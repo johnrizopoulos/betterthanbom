@@ -1,0 +1,136 @@
+# Simple As Weather – Replit Build Prompt
+
+## Overview
+Create a **single-page weather application** called "Simple As Weather" that displays current conditions and a 7-day forecast using Australia's Bureau of Meteorology (BoM) API.
+
+**Key differentiator**: Instead of displaying numerical weather data (temperature, wind speed, humidity %), use **contextual icon imagery** to communicate conditions intuitively.
+
+---
+
+## Core Requirements
+
+### 1. Single-Page App Structure
+- One HTML page (or React component if preferred)
+- Embedded CSS and JavaScript in `<style>` and `<script>` tags
+- No page reloads; all interactions happen via API calls and DOM updates
+
+### 2. Location Handling
+- **Initial load**: Detect user's current location using Geolocation API (`navigator.geolocation`)
+- **Location search**: Provide a search input allowing users to enter a suburb, postcode, or location name
+- Update all weather data when location changes
+
+### 3. Current Weather Display
+- Show current conditions for the user's location
+- **No numbers**: Hide temperature, wind speed, humidity, pressure
+- **Display icon imagery** that conveys the condition (see Icon Strategy below)
+- Include location name and last-updated timestamp
+
+### 4. 7-Day Forecast
+- Display forecast for the next 7 days
+- **One icon per day** representing the most likely condition for that day
+- Include day of week (e.g. "Tuesday", "Wednesday")
+- **No numbers**: Hide max/min temperature, % chance of rain, wind gusts
+- Icon reflects the primary forecast condition
+
+### 5. Icon/Image Strategy
+Replace numerical data with **contextual imagery** that communicates weather conditions:
+
+| Condition | Icon Concept | Example |
+|-----------|--------------|---------|
+| Sunny/Clear | Sun image or bright emoji | ☀️ or summer illustration |
+| Cloudy | Cloud image | ☁️ or grey cloud |
+| Rainy (need umbrella) | Umbrella image | 🌂 or standalone umbrella illustration |
+| Rain + Wind | Person in jumper holding umbrella | Illustration of someone bundled up with umbrella |
+| Windy | Wind imagery or person leaning into wind | 💨 or stylized wind lines |
+| Cold | Person in warm clothing | Illustration or ❄️ |
+| Hot | Sun + person in light clothing | Illustration of someone fanning themselves |
+| Thunderstorm | Lightning + rain imagery | ⛈️ or dramatic storm illustration |
+| Hail | Hail stones imagery | ⛈️ with hail particles |
+
+Choose either:
+- **Simple emoji/Unicode** (fastest to implement)
+- **SVG icons** (cleaner, more brand-consistent)
+- **PNG image files** (more expressive illustrations)
+
+### 6. Data Source: BoM API
+Use Bureau of Meteorology's publicly available JSON feeds:
+
+**Current Observations**:
+- Pattern: `http://www.bom.gov.au/fwo/[PRODUCT_CODE]/[PRODUCT_CODE].[STATION_ID].json`
+- Example: `http://www.bom.gov.au/fwo/IDV60901/IDV60901.95936.json` (Melbourne Olympic Park)
+
+**Forecast**:
+- Pattern: `http://www.bom.gov.au/fwo/[PRODUCT_CODE]/IDN[REGION].json`
+- Example: `http://www.bom.gov.au/fwo/IDN60901/IDN60901.json` (VIC forecast)
+
+Alternatively, use the **unofficial `api.weather.bom.gov.au`** endpoints if available (reverse-engineered):
+- May require location lookup (lat/long → forecast zone)
+- More modern JSON structure
+
+**Note**: No API key required for BoM public feeds (CORS may require proxy or server-side fetch in some cases).
+
+### 7. User Interactions
+- **Search input**: User types location → fetch data for that location
+- **Auto-complete** (optional): Show suggestions as user types
+- **Refresh button** (optional): Manually refresh current conditions
+- **Error handling**: Display user-friendly message if location not found or API fails
+
+---
+
+## Technical Stack (Replit)
+
+- **Language**: Python (Flask backend) or JavaScript (client-side with HTML)
+- **Frontend**: HTML + CSS + Vanilla JavaScript (or React via CDN)
+- **API calls**: `fetch()` (JavaScript) or `requests` (Python)
+- **Geolocation**: Browser Geolocation API (`navigator.geolocation.getCurrentPosition()`)
+- **Icons**: Emoji, SVG, or external image URLs
+
+**Recommended approach for Replit**:
+1. Create a Python Flask app that fetches BoM data server-side and serves JSON to frontend
+2. Use Geolocation API on frontend to get user's lat/long, send to backend
+3. Backend queries BoM for closest matching station/forecast zone
+4. Return forecast data to frontend, which renders icons dynamically
+
+---
+
+## Design Guidelines
+
+- **Clean & minimal**: Focus on icon communication; avoid clutter
+- **Responsive**: Works on mobile, tablet, desktop
+- **Accessible**: Ensure sufficient colour contrast; include alt text for icons
+- **Dark/Light mode**: (Optional) support both themes
+- **Loading states**: Show spinner while fetching data
+
+---
+
+## Success Criteria
+
+✅ App loads and detects user's current location  
+✅ Current conditions display with contextual icon (no numerical data visible)  
+✅ 7-day forecast displays with one icon per day (no numerical data visible)  
+✅ Location search works; app updates display when new location entered  
+✅ Icons accurately reflect BoM forecast conditions  
+✅ No errors in browser console; graceful error messages for failed API calls  
+✅ App runs successfully in Replit and is shareable via Replit link  
+
+---
+
+## Out of Scope
+
+- User accounts / saved locations
+- Historical weather data
+- Severe weather alerts
+- Air quality data
+- Marine forecast / fire danger ratings
+- Detailed radar or satellite imagery
+- Social sharing features
+
+---
+
+## Notes for Builder
+
+1. **BoM station codes**: You'll need to map user's location (suburb/postcode/lat-long) to the correct BoM product/station code. Consider using BoM's catalogue or an external geocoding service.
+2. **CORS**: BoM public endpoints may have CORS restrictions; use a backend proxy if needed.
+3. **Icon library**: If using SVG or PNG, consider a lightweight icon set (e.g. Feather Icons, Font Awesome) or create custom illustrations.
+4. **Caching**: Consider caching API responses (e.g. 30-minute TTL) to avoid rate-limiting and improve performance.
+5. **Testing**: Test with multiple locations (coastal, inland, highlands) to ensure icon accuracy across different condition types.
