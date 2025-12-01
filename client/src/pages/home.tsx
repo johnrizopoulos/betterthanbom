@@ -75,9 +75,18 @@ export default function Home() {
 
   return (
     <div className={cn(
-      "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
+      "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br relative",
       getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
+      {/* Help Button - Top Right */}
+      <button
+        data-testid="button-icons-legend"
+        onClick={() => setShowLegend(true)}
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground"
+      >
+        <HelpCircle className="h-5 w-5" />
+      </button>
+
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
         
         {/* Header Title */}
@@ -99,17 +108,6 @@ export default function Home() {
             Better Than BoM
           </h1>
         </motion.div>
-        
-        {/* Header with Icons Button */}
-        <div className="flex justify-end">
-          <button
-            data-testid="button-icons-legend"
-            onClick={() => setShowLegend(true)}
-            className="p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </button>
-        </div>
         
         {/* Search Bar */}
         <motion.div 
