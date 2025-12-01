@@ -75,18 +75,9 @@ export default function Home() {
 
   return (
     <div className={cn(
-      "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br relative",
+      "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
       getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
-      {/* Help Button - Top Right */}
-      <button
-        data-testid="button-icons-legend"
-        onClick={() => setShowLegend(true)}
-        className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground"
-      >
-        <HelpCircle className="h-5 w-5" />
-      </button>
-
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
         
         {/* Header Title */}
@@ -109,13 +100,14 @@ export default function Home() {
           </h1>
         </motion.div>
         
-        {/* Search Bar */}
-        <motion.div 
-          ref={searchRef}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative w-full z-20"
-        >
+        {/* Search Bar with Help Button */}
+        <div className="flex items-center gap-2">
+          <motion.div 
+            ref={searchRef}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative flex-1 z-20"
+          >
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input 
@@ -167,6 +159,16 @@ export default function Home() {
             )}
           </AnimatePresence>
         </motion.div>
+
+          {/* Help Button */}
+          <button
+            data-testid="button-icons-legend"
+            onClick={() => setShowLegend(true)}
+            className="p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground flex-shrink-0"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </button>
+        </div>
 
         <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] relative">
           <AnimatePresence mode="wait">
