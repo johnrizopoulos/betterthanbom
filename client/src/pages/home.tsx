@@ -91,17 +91,12 @@ export default function Home() {
               color: '#001a4d',
               fontFamily: '"MS DOS", "Perfect DOS VGA 437", "Courier New", monospace',
               letterSpacing: '0.15em',
-              textShadow: `
-                2px 2px 0px #003d99,
-                4px 4px 0px #0066ff,
-                1px 1px 0px #001a4d
-              `,
               fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
               fontWeight: 900,
               lineHeight: 1,
             }}
           >
-            &gt; BETTER THAN BoM
+            Better Than BoM
           </h1>
         </motion.div>
         
