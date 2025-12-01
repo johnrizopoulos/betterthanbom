@@ -122,17 +122,34 @@ export default function Home() {
                      data.current.condition === 'rain' ? "bg-blue-300" :
                      "bg-slate-300"
                    )} />
-                   <WeatherIcon 
-                     condition={data.current.condition} 
-                     temp={data.current.temp}
-                     size={240} 
-                     className="drop-shadow-2xl relative z-10 filter"
-                   />
+                   <div className="relative z-10 flex flex-col items-center">
+                     <WeatherIcon 
+                       condition={data.current.condition} 
+                       temp={data.current.temp}
+                       size={240} 
+                       className="drop-shadow-2xl filter"
+                     />
+                     
+                     {/* Current Temperature */}
+                     {data.current.temp !== undefined && (
+                       <motion.div 
+                         initial={{ opacity: 0, y: 10 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         transition={{ delay: 0.2 }}
+                         className="absolute -bottom-4 -right-4 bg-white/60 backdrop-blur-md px-6 py-2 rounded-full shadow-lg border border-white/50"
+                       >
+                         <span className="text-5xl font-heading font-bold text-foreground tracking-tighter">
+                           {data.current.temp}°
+                         </span>
+                       </motion.div>
+                     )}
+                   </div>
+
                    <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-8 text-3xl font-heading font-semibold text-foreground/80"
+                    className="mt-12 text-3xl font-heading font-semibold text-foreground/80"
                    >
                      {data.current.description}
                    </motion.p>
@@ -157,13 +174,18 @@ export default function Home() {
                     <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       {day.dayName.slice(0, 3)}
                     </span>
-                    <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300">
-                      <WeatherIcon 
-                        condition={day.condition} 
-                        temp={day.temp}
-                        size={28} 
-                        animate={false} 
-                      />
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300">
+                        <WeatherIcon 
+                          condition={day.condition} 
+                          temp={day.temp}
+                          size={28} 
+                          animate={false} 
+                        />
+                      </div>
+                      <span className="text-sm font-semibold text-foreground/80">
+                        {day.temp}°
+                      </span>
                     </div>
                     {/* A little dot for today, or decoration */}
                     {i === 0 && (
