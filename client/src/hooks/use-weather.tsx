@@ -1,6 +1,6 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { WeatherData } from "@/lib/weather-data";
+import { useToast } from "@/hooks/use-toast";
 
 export interface LocationResult {
   id: number;
@@ -17,6 +17,7 @@ export function useWeather() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const { toast } = useToast();
 
   // Initial load - fetch Melbourne by default
   useEffect(() => {
@@ -53,13 +54,17 @@ export function useWeather() {
       
     } catch (error) {
       console.error('Weather fetch error:', error);
-      // Error handling - could add user-facing error state if needed
+      toast({
+        title: "Weather unavailable",
+        description: error instanceof Error ? error.message : "Failed to fetch weather data.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const searchLocations = async (query: string) => {
+  const searchLocations = useCallback(async (query: string) => {
     if (!query || query.length < 2) {
       setSearchResults([]);
       return;
@@ -82,7 +87,7 @@ export function useWeather() {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, []);
 
   const selectLocation = async (location: LocationResult) => {
     setSearchResults([]);

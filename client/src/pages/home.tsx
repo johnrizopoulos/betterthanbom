@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { WeatherIcon } from "@/components/weather-icon";
@@ -8,7 +7,6 @@ import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import type { DailyForecast } from "@/lib/weather-data";
 
 export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
@@ -227,7 +225,7 @@ export default function Home() {
               className="w-full bg-white/30 backdrop-blur-xl rounded-3xl p-3 shadow-lg border border-white/40"
             >
               <div className="grid grid-cols-7 gap-2">
-                {data.forecast.map((day) => (
+                {data.forecast.map((day, i) => (
                   <div key={day.date} className="flex flex-col items-center gap-1 group cursor-default">
                     <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       {day.dayName.slice(0, 3)}
