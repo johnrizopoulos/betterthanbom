@@ -199,10 +199,6 @@ export default function Home() {
                   transition={{ delay: 0.1 }}
                   className="mb-2 space-y-0"
                 >
-                  <div className="flex items-center justify-center gap-2 text-muted-foreground mb-2">
-                    <MapPin className="h-4 w-4" />
-                    <span className="text-sm font-medium tracking-wide uppercase">Current Location</span>
-                  </div>
                   <h1 data-testid="text-location" className="text-4xl md:text-5xl text-foreground tracking-tight font-bold">
                     {data.location.split(',')[0]}
                   </h1>
