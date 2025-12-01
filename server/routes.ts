@@ -31,41 +31,44 @@ export async function registerRoutes(
         return res.status(404).json({ error: "Location not found. Try Melbourne, Sydney, Brisbane, or Hobart." });
       }
 
-      // Fetch current observations from BoM
-      const statePrefix = locationData.stationId.startsWith('9') ? 'IDV' : 
-                          locationData.stationId.startsWith('6') ? 'IDN' : 
-                          locationData.stationId.startsWith('94') ? 'IDT' : 'IDQ';
-      const bomUrl = `http://www.bom.gov.au/fwo/${statePrefix}60901/${statePrefix}60901.${locationData.stationId}.json`;
+      // Coordinates for Australian cities
+      const coords: Record<string, { lat: number; lon: number }> = {
+        'melbourne': { lat: -37.8136, lon: 144.9631 },
+        'sydney': { lat: -33.8688, lon: 151.2093 },
+        'brisbane': { lat: -27.4705, lon: 153.0260 },
+        'hobart': { lat: -42.8821, lon: 147.3272 },
+      };
+
+      const coord = coords[normalizedLocation];
+      if (!coord) {
+        return res.status(404).json({ error: "Location not found" });
+      }
+
+      // Fetch from Open-Meteo (free, no API key required)
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coord.lat}&longitude=${coord.lon}&current=temperature_2m,weather_code,is_day&timezone=Australia/Sydney`;
       
-      const response = await fetch(bomUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'application/json',
-          'Accept-Language': 'en-AU,en;q=0.9',
-          'Referer': 'http://www.bom.gov.au/',
-        }
-      });
+      const response = await fetch(openMeteoUrl);
       
       if (!response.ok) {
-        throw new Error(`BoM API returned ${response.status}`);
+        throw new Error(`Weather API returned ${response.status}`);
       }
 
-      const bomData = await response.json();
-      const observations = bomData.observations?.data?.[0];
+      const data = await response.json();
+      const current = data.current;
 
-      if (!observations) {
-        throw new Error("No observation data available");
+      if (!current) {
+        throw new Error("No weather data available");
       }
 
-      // Map BoM data to our format
+      // Map WMO weather codes to our conditions
       const weatherData = {
         location: locationData.name,
-        lastUpdated: observations.local_date_time_full || new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
         current: {
-          temp: parseFloat(observations.air_temp) || 20,
-          condition: mapBomConditionToOurs(observations.weather),
-          isDay: true, // Could derive from sunrise/sunset if needed
-          description: observations.weather || "Unknown"
+          temp: current.temperature_2m || 20,
+          condition: mapWmoCodeToCondition(current.weather_code),
+          isDay: current.is_day,
+          description: getWeatherDescription(current.weather_code)
         }
       };
 
@@ -98,25 +101,49 @@ export async function registerRoutes(
   return httpServer;
 }
 
-// Helper to map BoM weather descriptions to our conditions
-function mapBomConditionToOurs(bomWeather: string): string {
-  if (!bomWeather) return "clear";
-  
-  const weather = bomWeather.toLowerCase();
-  
-  if (weather.includes("rain") || weather.includes("shower")) return "rain";
-  if (weather.includes("storm") || weather.includes("thunder")) return "storm";
-  if (weather.includes("snow")) return "snow";
-  if (weather.includes("hail")) return "hail";
-  if (weather.includes("fog") || weather.includes("mist")) return "fog";
-  if (weather.includes("cloud") || weather.includes("overcast")) {
-    if (weather.includes("partly")) return "partly-cloudy";
-    return "cloudy";
-  }
-  if (weather.includes("wind")) return "wind";
-  if (weather.includes("clear") || weather.includes("sunny") || weather.includes("fine")) return "clear";
-  
+// Map WMO weather codes to our conditions
+// https://www.open-meteo.com/en/docs
+function mapWmoCodeToCondition(code: number): string {
+  if (code === 0 || code === 1) return "clear";
+  if (code === 2) return "partly-cloudy";
+  if (code === 3) return "cloudy";
+  if (code === 45 || code === 48) return "fog";
+  if (code === 51 || code === 53 || code === 55 || code === 61 || code === 63 || code === 65 || code === 80 || code === 81 || code === 82) return "rain";
+  if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return "snow";
+  if (code === 80 || code === 81 || code === 82) return "rain";
+  if (code === 85 || code === 86) return "snow";
+  if (code === 95 || code === 96 || code === 99) return "storm";
   return "partly-cloudy";
+}
+
+function getWeatherDescription(code: number): string {
+  const descriptions: Record<number, string> = {
+    0: "Clear sky",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Foggy",
+    48: "Foggy",
+    51: "Light drizzle",
+    53: "Moderate drizzle",
+    55: "Dense drizzle",
+    61: "Slight rain",
+    63: "Moderate rain",
+    65: "Heavy rain",
+    71: "Slight snow",
+    73: "Moderate snow",
+    75: "Heavy snow",
+    77: "Snow grains",
+    80: "Slight rain showers",
+    81: "Moderate rain showers",
+    82: "Violent rain showers",
+    85: "Slight snow showers",
+    86: "Heavy snow showers",
+    95: "Thunderstorm",
+    96: "Thunderstorm with hail",
+    99: "Thunderstorm with large hail",
+  };
+  return descriptions[code] || "Unknown";
 }
 
 // Generate mock 7-day forecast
