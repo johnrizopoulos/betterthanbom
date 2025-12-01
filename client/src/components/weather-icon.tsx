@@ -44,15 +44,21 @@ const SunHat = ({ size, className }: { size: number; className?: string }) => (
   </svg>
 );
 
-// Option 2: Crewneck Jumper
+// Crewneck Jumper - Clean rounded collar, no hood
 const Crewneck = ({ size, className }: { size: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 4a4 4 0 0 0-4 4v1h8V8a4 4 0 0 0-4-4Z" /> {/* Neck area */}
-    <path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
-    <path d="M4 9l-2 5" />
-    <path d="M20 9l2 5" />
-    <path d="M8 4c0 2 1.8 3 4 3s4-1 4-3" /> {/* Collar line */}
-    <path d="M6 21h12" /> {/* Hem ribbing hint */}
+    {/* Rounded collar neckline */}
+    <path d="M9 6c0 1.5 1.3 2.5 3 2.5s3-1 3-2.5" />
+    {/* Shoulders and body */}
+    <path d="M6 8h12v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8Z" />
+    {/* Left sleeve */}
+    <path d="M6 8L2 13" />
+    {/* Right sleeve */}
+    <path d="M18 8l4 5" />
+    {/* Collar band */}
+    <path d="M9 6h6" />
+    {/* Hem ribbing */}
+    <path d="M6 21h12" />
   </svg>
 );
 
