@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { WeatherCondition } from "@/lib/weather-data";
 import { cn } from "@/lib/utils";
-import weatherIcons from "@assets/image_1764585280605.png";
+import weatherIcons from "@assets/image_1764585934042.png";
 
 interface WeatherIconProps {
   condition: WeatherCondition;
