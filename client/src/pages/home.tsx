@@ -188,12 +188,6 @@ export default function Home() {
                         {day.temp}°
                       </span>
                     </div>
-                    {/* A little dot for today, or decoration */}
-                    {i === 0 ? (
-                      <div className="w-1 h-1 rounded-full bg-primary/50 mt-1" />
-                    ) : (
-                      <div className="w-1 h-1 mt-1 opacity-0" />
-                    )}
                   </div>
                 ))}
               </div>
