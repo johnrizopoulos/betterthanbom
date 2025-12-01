@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { motion } from "framer-motion";
 
 interface WeatherIconProps {
@@ -33,33 +32,35 @@ function getIconForWeather(condition: string, temp: number): keyof typeof ICON_M
   }
 }
 
-const WeatherIconComponent = ({ condition, temp, size = 64, animate = true, className = "" }: WeatherIconProps) => {
+export function WeatherIcon({ condition, temp, size = 64, animate = true, className = "" }: WeatherIconProps) {
   const iconKey = getIconForWeather(condition, temp);
   const position = ICON_MAP[iconKey];
 
-  const MotionOrDiv = animate ? motion.div : "div";
-  const animationProps = animate
-    ? {
-        initial: { scale: 0.8, opacity: 0 },
-        animate: { scale: 1, opacity: 1 },
-        transition: { duration: 0.5, ease: "easeOut" as const },
-      }
-    : {};
+  const iconStyle = {
+    width: size,
+    height: size,
+    backgroundImage: "url('/weather-icons-sprite.png')",
+    backgroundPosition: `-${position.x * (size / 64)}px -${position.y * (size / 64)}px`,
+    backgroundSize: `${320 * (size / 64)}px ${64 * (size / 64)}px`,
+    imageRendering: "pixelated" as const,
+  };
+
+  if (animate) {
+    return (
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={className}
+      >
+        <div style={iconStyle} />
+      </motion.div>
+    );
+  }
 
   return (
-    <MotionOrDiv {...animationProps} className={className}>
-      <div
-        style={{
-          width: size,
-          height: size,
-          backgroundImage: "url('/weather-icons-sprite.png')",
-          backgroundPosition: `-${position.x * (size / 64)}px -${position.y * (size / 64)}px`,
-          backgroundSize: `${320 * (size / 64)}px ${64 * (size / 64)}px`,
-          imageRendering: "pixelated",
-        }}
-      />
-    </MotionOrDiv>
+    <div className={className}>
+      <div style={iconStyle} />
+    </div>
   );
-};
-
-export const WeatherIcon = memo(WeatherIconComponent);
+}
