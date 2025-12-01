@@ -175,8 +175,8 @@ export default function Home() {
                     <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       {day.dayName.slice(0, 3)}
                     </span>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300">
+                    <div className="flex flex-col items-center gap-1 flex-1 justify-center min-h-[60px]">
+                      <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300 h-[44px] flex items-center justify-center">
                         <WeatherIcon 
                           condition={day.condition} 
                           temp={day.temp}
@@ -189,8 +189,10 @@ export default function Home() {
                       </span>
                     </div>
                     {/* A little dot for today, or decoration */}
-                    {i === 0 && (
+                    {i === 0 ? (
                       <div className="w-1 h-1 rounded-full bg-primary/50 mt-1" />
+                    ) : (
+                      <div className="w-1 h-1 mt-1 opacity-0" />
                     )}
                   </div>
                 ))}
