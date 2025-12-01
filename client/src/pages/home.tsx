@@ -177,12 +177,6 @@ export default function Home() {
 
                 {/* Main Icon - The Hero */}
                 <div className="relative mb-2 flex flex-col items-center">
-                   <div className={cn(
-                     "absolute inset-0 blur-3xl opacity-40 rounded-full scale-150 transition-colors duration-1000",
-                     data.current.condition === 'clear' ? "bg-amber-300" :
-                     data.current.condition === 'rain' ? "bg-blue-300" :
-                     "bg-slate-300"
-                   )} />
                    
                    <div className="relative z-10">
                      <WeatherIcon 
