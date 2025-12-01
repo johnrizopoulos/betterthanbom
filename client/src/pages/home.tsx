@@ -19,7 +19,15 @@ export default function Home() {
     }
   };
 
-  const getBackgroundClass = (condition?: WeatherCondition) => {
+  const getBackgroundClass = (condition?: WeatherCondition, temp?: number) => {
+    if (!condition) return "from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-950";
+
+    // Override background for specific "Feel" based on the new icons
+    if (temp !== undefined) {
+       if (temp < 10) return "from-stone-200 to-stone-100 dark:from-stone-900 dark:to-stone-950"; // Cozy/Inside
+       if (temp > 28) return "from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-950/40"; // Hot
+    }
+
     switch (condition) {
       case "clear":
         return "from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30";
@@ -43,7 +51,7 @@ export default function Home() {
   return (
     <div className={cn(
       "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
-      getBackgroundClass(data?.current.condition)
+      getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-8">
         
@@ -116,6 +124,7 @@ export default function Home() {
                    )} />
                    <WeatherIcon 
                      condition={data.current.condition} 
+                     temp={data.current.temp}
                      size={240} 
                      className="drop-shadow-2xl relative z-10 filter"
                    />
@@ -149,7 +158,12 @@ export default function Home() {
                       {day.dayName.slice(0, 3)}
                     </span>
                     <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300">
-                      <WeatherIcon condition={day.condition} size={28} animate={false} />
+                      <WeatherIcon 
+                        condition={day.condition} 
+                        temp={day.temp}
+                        size={28} 
+                        animate={false} 
+                      />
                     </div>
                     {/* A little dot for today, or decoration */}
                     {i === 0 && (
