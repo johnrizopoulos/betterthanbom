@@ -53,7 +53,7 @@ export default function Home() {
       "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
       getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
-      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-8">
+      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-4">
         
         {/* Search Bar */}
         <motion.form 
@@ -100,7 +100,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="mb-12 space-y-1"
+                  className="mb-6 space-y-1"
                 >
                   <div className="flex items-center justify-center gap-2 text-muted-foreground mb-2">
                     <MapPin className="h-4 w-4" />
@@ -115,7 +115,7 @@ export default function Home() {
                 </motion.div>
 
                 {/* Main Icon - The Hero */}
-                <div className="relative mb-16 flex flex-col items-center">
+                <div className="relative mb-6 flex flex-col items-center">
                    <div className={cn(
                      "absolute inset-0 blur-3xl opacity-40 rounded-full scale-150 transition-colors duration-1000",
                      data.current.condition === 'clear' ? "bg-amber-300" :
@@ -138,7 +138,7 @@ export default function Home() {
                        initial={{ opacity: 0, y: 10 }}
                        animate={{ opacity: 1, y: 0 }}
                        transition={{ delay: 0.2 }}
-                       className="mt-6 relative z-10"
+                       className="mt-3 relative z-10"
                      >
                        <span className="text-6xl md:text-7xl font-heading font-bold text-foreground tracking-tighter">
                          {data.current.temp}°
@@ -150,7 +150,7 @@ export default function Home() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-4 text-3xl font-heading font-medium text-muted-foreground relative z-10"
+                    className="mt-2 text-3xl font-heading font-medium text-muted-foreground relative z-10"
                    >
                      {data.current.description}
                    </motion.p>
@@ -167,11 +167,11 @@ export default function Home() {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="w-full bg-white/30 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-white/40"
+              className="w-full bg-white/30 backdrop-blur-xl rounded-3xl p-4 shadow-lg border border-white/40"
             >
               <div className="grid grid-cols-7 gap-2">
                 {data.forecast.map((day, i) => (
-                  <div key={day.date} className="flex flex-col items-center gap-3 group cursor-default">
+                  <div key={day.date} className="flex flex-col items-center gap-2 group cursor-default">
                     <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       {day.dayName.slice(0, 3)}
                     </span>
