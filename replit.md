@@ -1,6 +1,6 @@
 # Better than BoM - Weather Application
 
-## Version 1.0
+## Version 1.1
 
 **Release Date:** December 1, 2025
 
@@ -13,11 +13,15 @@ Better than BoM is an Australian weather application that provides current weath
 - Real-time weather data from Open-Meteo API
 - Pixel-art outfit icons based on temperature and weather conditions
 - 7-day forecast with daily outfit recommendations
-- Dynamic background gradients based on weather conditions
+- Clean, minimal white background design
+- Retro 90s computer-style header
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- Design preference: Pixel art aesthetic, 90s computer style
+- Header style: Dark blue, monospace font, no shadow effects
+- Background: Clean white, no dynamic color changes
 
 ## Outfit Icon Logic
 
@@ -106,8 +110,17 @@ The app displays different pixel-art icons based on weather conditions:
 └── replit.md                       # This documentation
 ```
 
-## Recent Changes (V1.0)
+## Recent Changes
 
+### V1.1 (December 1, 2025)
+1. **Header Styling** - "Better Than BoM" title with 90s computer font (dark blue, Courier New monospace)
+2. **Icon Legend Modal** - Now displays actual pixel-art WeatherIcon components instead of emoji
+3. **Removed "Current Location" Label** - Cleaner UI without redundant text
+4. **Help Button Repositioned** - Moved to the right of the search field
+5. **Clean Background** - Removed dynamic background color logic, now uses plain white
+6. **Improved Spacing** - Increased gap between search field and city name
+
+### V1.0 (December 1, 2025)
 1. **Suburb Search** - Users can now search for any Australian suburb using Open-Meteo geocoding
 2. **Real Weather Data** - Switched from mock data to live Open-Meteo API
 3. **7-Day Forecast** - Real forecast data with accurate day names
