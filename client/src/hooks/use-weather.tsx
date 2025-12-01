@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+
+import { useState, useEffect } from "react";
 import { WeatherData } from "@/lib/weather-data";
 
 export interface LocationResult {
@@ -58,7 +59,7 @@ export function useWeather() {
     }
   };
 
-  const searchLocations = useCallback(async (query: string) => {
+  const searchLocations = async (query: string) => {
     if (!query || query.length < 2) {
       setSearchResults([]);
       return;
@@ -81,7 +82,7 @@ export function useWeather() {
     } finally {
       setIsSearching(false);
     }
-  }, []);
+  };
 
   const selectLocation = async (location: LocationResult) => {
     setSearchResults([]);

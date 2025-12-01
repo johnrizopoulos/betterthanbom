@@ -1,4 +1,4 @@
-import { memo } from "react";
+
 import { motion } from "framer-motion";
 
 interface WeatherIconProps {
@@ -33,7 +33,7 @@ function getIconForWeather(condition: string, temp: number): keyof typeof ICON_M
   }
 }
 
-const WeatherIconComponent = ({ condition, temp, size = 64, animate = true, className = "" }: WeatherIconProps) => {
+export function WeatherIcon({ condition, temp, size = 64, animate = true, className = "" }: WeatherIconProps) {
   const iconKey = getIconForWeather(condition, temp);
   const position = ICON_MAP[iconKey];
 
@@ -60,7 +60,4 @@ const WeatherIconComponent = ({ condition, temp, size = 64, animate = true, clas
       />
     </MotionOrDiv>
   );
-};
-
-// Memoize the component to prevent unnecessary re-renders
-export const WeatherIcon = memo(WeatherIconComponent);
+}
