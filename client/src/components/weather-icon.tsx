@@ -1,21 +1,7 @@
 import { motion } from "framer-motion";
-import { 
-  Cloud, 
-  CloudDrizzle, 
-  CloudFog, 
-  CloudHail, 
-  CloudLightning, 
-  CloudRain, 
-  CloudSnow, 
-  Moon, 
-  Sun, 
-  Wind,
-  Umbrella,
-  Home,
-  Shirt,
-} from "lucide-react";
 import { WeatherCondition } from "@/lib/weather-data";
 import { cn } from "@/lib/utils";
+import weatherIcons from "@assets/image_1764585280605.png";
 
 interface WeatherIconProps {
   condition: WeatherCondition;
@@ -25,106 +11,90 @@ interface WeatherIconProps {
   animate?: boolean;
 }
 
-// Custom SVG Icons to match Lucide style
-const SunHat = ({ size, className }: { size: number; className?: string }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="1.5" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M7 14V10a5 5 0 0 1 10 0v4" />
-    <path d="M2 14h20c0 2.5-4.5 4-10 4S2 16.5 2 14Z" />
-    <path d="M7 14h10" />
-  </svg>
-);
+type IconType = "umbrella" | "jumper" | "tshirt" | "hat" | "coat";
 
-// Crewneck Jumper - Clean rounded collar, no hood
-const Crewneck = ({ size, className }: { size: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    {/* Rounded collar neckline */}
-    <path d="M9 6c0 1.5 1.3 2.5 3 2.5s3-1 3-2.5" />
-    {/* Shoulders and body */}
-    <path d="M6 8h12v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8Z" />
-    {/* Left sleeve */}
-    <path d="M6 8L2 13" />
-    {/* Right sleeve */}
-    <path d="M18 8l4 5" />
-    {/* Collar band */}
-    <path d="M9 6h6" />
-    {/* Hem ribbing */}
-    <path d="M6 21h12" />
-  </svg>
-);
+const iconPositions: Record<IconType, { x: number; y: number }> = {
+  umbrella: { x: 0, y: 0 },
+  jumper: { x: 50, y: 0 },
+  tshirt: { x: 100, y: 0 },
+  hat: { x: 25, y: 100 },
+  coat: { x: 75, y: 100 },
+};
+
+function PixelIcon({ type, size }: { type: IconType; size: number }) {
+  const pos = iconPositions[type];
+  
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        backgroundImage: `url(${weatherIcons})`,
+        backgroundSize: "300% 200%",
+        backgroundPosition: `${pos.x}% ${pos.y}%`,
+        backgroundRepeat: "no-repeat",
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
 
 export function WeatherIcon({ condition, temp, className, size = 24, animate = true }: WeatherIconProps) {
-  const iconProps = {
-    size: size,
-    className: cn("stroke-[1.5px]", className), 
-  };
-
   const animationProps = animate ? {
     initial: { scale: 0.8, opacity: 0 },
     animate: { scale: 1, opacity: 1 },
     transition: { type: "spring" as const, stiffness: 200, damping: 15 }
   } : {};
 
-  const getIcon = () => {
+  const getIconType = (): IconType => {
     // Rule 1: Raining -> Umbrella
     if (["rain", "storm", "hail", "drizzle"].includes(condition)) {
-      return <Umbrella {...iconProps} className={cn(iconProps.className, "text-blue-500 fill-blue-100")} />;
+      return "umbrella";
     }
 
     // Check temperature rules if provided
     if (temp !== undefined) {
-      // Rule 2: > 28c -> Wide brim hat
+      // Rule 2: > 28c -> Sun hat
       if (temp > 28) {
-        return <SunHat {...iconProps} className={cn(iconProps.className, "text-amber-500 fill-amber-100")} />;
+        return "hat";
       }
       
       // Rule 3: 20-27c -> T-shirt
       if (temp >= 20 && temp <= 27) {
-         return <Shirt {...iconProps} className={cn(iconProps.className, "text-orange-400 fill-orange-50")} />;
+        return "tshirt";
       }
 
-      // Rule 4: 10-19c -> Crewneck Jumper (Updated)
+      // Rule 4: 10-19c -> Jumper
       if (temp >= 10 && temp <= 19) {
-        return <Crewneck {...iconProps} className={cn(iconProps.className, "text-indigo-400 fill-indigo-50")} />;
+        return "jumper";
       }
 
-      // Rule 5: < 10c -> Stay inside (House)
+      // Rule 5: < 10c -> Stay inside (Coat)
       if (temp < 10) {
-        return <Home {...iconProps} className={cn(iconProps.className, "text-stone-600 fill-stone-200")} />;
+        return "coat";
       }
     }
 
-    // Fallback
+    // Fallback based on condition
     switch (condition) {
       case "clear":
-        return <Sun {...iconProps} className={cn(iconProps.className, "text-amber-400 fill-amber-400/20")} />;
+        return "hat";
       case "partly-cloudy":
-        return <Cloud {...iconProps} className={cn(iconProps.className, "text-sky-400 fill-sky-100")} />;
       case "cloudy":
-        return <Cloud {...iconProps} className={cn(iconProps.className, "text-slate-400 fill-slate-100")} />;
+        return "tshirt";
       case "wind":
-        return <Wind {...iconProps} className={cn(iconProps.className, "text-teal-400")} />;
+        return "jumper";
       case "snow":
-        return <CloudSnow {...iconProps} className={cn(iconProps.className, "text-cyan-300 fill-cyan-50")} />;
       case "fog":
-        return <CloudFog {...iconProps} className={cn(iconProps.className, "text-slate-300 fill-slate-50")} />;
+        return "coat";
       default:
-        return <Sun {...iconProps} />;
+        return "tshirt";
     }
   };
 
   return (
-    <motion.div {...animationProps} className="flex items-center justify-center">
-      {getIcon()}
+    <motion.div {...animationProps} className={cn("flex items-center justify-center", className)}>
+      <PixelIcon type={getIconType()} size={size} />
     </motion.div>
   );
 }
