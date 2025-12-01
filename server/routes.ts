@@ -32,8 +32,19 @@ export async function registerRoutes(
       }
 
       // Fetch current observations from BoM
-      const bomUrl = `http://www.bom.gov.au/fwo/IDV60901/IDV60901.${locationData.stationId}.json`;
-      const response = await fetch(bomUrl);
+      const statePrefix = locationData.stationId.startsWith('9') ? 'IDV' : 
+                          locationData.stationId.startsWith('6') ? 'IDN' : 
+                          locationData.stationId.startsWith('94') ? 'IDT' : 'IDQ';
+      const bomUrl = `http://www.bom.gov.au/fwo/${statePrefix}60901/${statePrefix}60901.${locationData.stationId}.json`;
+      
+      const response = await fetch(bomUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json',
+          'Accept-Language': 'en-AU,en;q=0.9',
+          'Referer': 'http://www.bom.gov.au/',
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`BoM API returned ${response.status}`);
