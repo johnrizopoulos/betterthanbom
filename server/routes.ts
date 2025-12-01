@@ -2,50 +2,73 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
+const BOM_HEADERS = {
+  'User-Agent': 'BetterThanBoM/1.0 (weather app; contact@example.com)',
+  'Accept': 'application/json',
+};
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
   
-  // Weather API Routes
+  // Search for Australian locations using Open-Meteo geocoding
+  app.get("/api/weather/search", async (req, res) => {
+    try {
+      const { q } = req.query;
+      
+      if (!q || typeof q !== 'string' || q.length < 2) {
+        return res.json({ results: [] });
+      }
+
+      const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=10&language=en&format=json`;
+      
+      const response = await fetch(geocodeUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Geocoding API returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Filter to Australian locations only
+      const australianResults = (data.results || [])
+        .filter((loc: any) => loc.country_code === 'AU')
+        .map((loc: any) => ({
+          id: loc.id,
+          name: loc.name,
+          state: loc.admin1 || '',
+          country: loc.country,
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          displayName: `${loc.name}${loc.admin1 ? ', ' + loc.admin1 : ''}`
+        }));
+
+      res.json({ results: australianResults });
+    } catch (error) {
+      console.error('Search API error:', error);
+      res.status(500).json({ error: "Failed to search locations" });
+    }
+  });
+
+  // Get current weather by coordinates
   app.get("/api/weather/current", async (req, res) => {
     try {
-      const { location } = req.query;
+      const { lat, lon, name } = req.query;
       
-      if (!location || typeof location !== 'string') {
-        return res.status(400).json({ error: "Location parameter required" });
+      if (!lat || !lon || typeof lat !== 'string' || typeof lon !== 'string') {
+        return res.status(400).json({ error: "Latitude and longitude required" });
       }
 
-      // Simple location mapping to BoM station IDs
-      const locationMap: Record<string, { name: string; stationId: string; forecastArea: string }> = {
-        'melbourne': { name: 'Melbourne, VIC', stationId: '95936', forecastArea: 'VIC_PT042' },
-        'sydney': { name: 'Sydney, NSW', stationId: '66062', forecastArea: 'NSW_PT131' },
-        'brisbane': { name: 'Brisbane, QLD', stationId: '94576', forecastArea: 'QLD_PT254' },
-        'hobart': { name: 'Hobart, TAS', stationId: '94029', forecastArea: 'TAS_PT039' },
-      };
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
 
-      const normalizedLocation = location.toLowerCase().trim();
-      const locationData = locationMap[normalizedLocation];
-
-      if (!locationData) {
-        return res.status(404).json({ error: "Location not found. Try Melbourne, Sydney, Brisbane, or Hobart." });
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ error: "Invalid coordinates" });
       }
 
-      // Coordinates for Australian cities
-      const coords: Record<string, { lat: number; lon: number }> = {
-        'melbourne': { lat: -37.8136, lon: 144.9631 },
-        'sydney': { lat: -33.8688, lon: 151.2093 },
-        'brisbane': { lat: -27.4705, lon: 153.0260 },
-        'hobart': { lat: -42.8821, lon: 147.3272 },
-      };
-
-      const coord = coords[normalizedLocation];
-      if (!coord) {
-        return res.status(404).json({ error: "Location not found" });
-      }
-
-      // Fetch from Open-Meteo (free, no API key required)
-      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coord.lat}&longitude=${coord.lon}&current=temperature_2m,weather_code,is_day&timezone=Australia/Sydney`;
+      // Fetch current weather from Open-Meteo
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=Australia/Sydney`;
       
       const response = await fetch(openMeteoUrl);
       
@@ -60,14 +83,15 @@ export async function registerRoutes(
         throw new Error("No weather data available");
       }
 
-      // Map WMO weather codes to our conditions
       const weatherData = {
-        location: locationData.name,
+        location: name || 'Unknown Location',
+        latitude,
+        longitude,
         lastUpdated: new Date().toISOString(),
         current: {
-          temp: current.temperature_2m || 20,
+          temp: Math.round(current.temperature_2m * 10) / 10,
           condition: mapWmoCodeToCondition(current.weather_code),
-          isDay: current.is_day,
+          isDay: current.is_day === 1,
           description: getWeatherDescription(current.weather_code)
         }
       };
@@ -79,18 +103,51 @@ export async function registerRoutes(
     }
   });
 
+  // Get 7-day forecast by coordinates
   app.get("/api/weather/forecast", async (req, res) => {
     try {
-      const { location } = req.query;
+      const { lat, lon } = req.query;
       
-      if (!location || typeof location !== 'string') {
-        return res.status(400).json({ error: "Location parameter required" });
+      if (!lat || !lon || typeof lat !== 'string' || typeof lon !== 'string') {
+        return res.status(400).json({ error: "Latitude and longitude required" });
       }
 
-      // Generate 7-day mock forecast (BoM forecast API structure is complex)
-      // In production, you'd parse the BoM forecast XML/JSON properly
-      const forecast = generateMockForecast();
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+
+      if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).json({ error: "Invalid coordinates" });
+      }
+
+      // Fetch 7-day forecast from Open-Meteo
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max&timezone=Australia/Sydney&forecast_days=7`;
       
+      const response = await fetch(openMeteoUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Forecast API returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      const daily = data.daily;
+
+      if (!daily || !daily.time) {
+        throw new Error("No forecast data available");
+      }
+
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      const forecast = daily.time.map((dateStr: string, i: number) => {
+        const date = new Date(dateStr);
+        return {
+          date: dateStr,
+          dayName: days[date.getDay()],
+          condition: mapWmoCodeToCondition(daily.weather_code[i]),
+          temp: Math.round(daily.temperature_2m_max[i]),
+          description: getWeatherDescription(daily.weather_code[i])
+        };
+      });
+
       res.json({ forecast });
     } catch (error) {
       console.error('Forecast API error:', error);
@@ -102,17 +159,16 @@ export async function registerRoutes(
 }
 
 // Map WMO weather codes to our conditions
-// https://www.open-meteo.com/en/docs
 function mapWmoCodeToCondition(code: number): string {
   if (code === 0 || code === 1) return "clear";
   if (code === 2) return "partly-cloudy";
   if (code === 3) return "cloudy";
   if (code === 45 || code === 48) return "fog";
-  if (code === 51 || code === 53 || code === 55 || code === 61 || code === 63 || code === 65 || code === 80 || code === 81 || code === 82) return "rain";
-  if (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) return "snow";
-  if (code === 80 || code === 81 || code === 82) return "rain";
-  if (code === 85 || code === 86) return "snow";
-  if (code === 95 || code === 96 || code === 99) return "storm";
+  if (code >= 51 && code <= 67) return "rain";
+  if (code >= 71 && code <= 77) return "snow";
+  if (code >= 80 && code <= 82) return "rain";
+  if (code >= 85 && code <= 86) return "snow";
+  if (code >= 95 && code <= 99) return "storm";
   return "partly-cloudy";
 }
 
@@ -127,40 +183,25 @@ function getWeatherDescription(code: number): string {
     51: "Light drizzle",
     53: "Moderate drizzle",
     55: "Dense drizzle",
+    56: "Freezing drizzle",
+    57: "Heavy freezing drizzle",
     61: "Slight rain",
     63: "Moderate rain",
     65: "Heavy rain",
+    66: "Light freezing rain",
+    67: "Heavy freezing rain",
     71: "Slight snow",
     73: "Moderate snow",
     75: "Heavy snow",
     77: "Snow grains",
-    80: "Slight rain showers",
-    81: "Moderate rain showers",
-    82: "Violent rain showers",
-    85: "Slight snow showers",
+    80: "Slight showers",
+    81: "Moderate showers",
+    82: "Heavy showers",
+    85: "Light snow showers",
     86: "Heavy snow showers",
     95: "Thunderstorm",
     96: "Thunderstorm with hail",
-    99: "Thunderstorm with large hail",
+    99: "Severe thunderstorm",
   };
   return descriptions[code] || "Unknown";
-}
-
-// Generate mock 7-day forecast
-function generateMockForecast() {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const conditions = ['clear', 'partly-cloudy', 'cloudy', 'rain', 'wind'];
-  
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() + i + 1);
-    
-    return {
-      date: date.toISOString().split('T')[0],
-      dayName: days[date.getDay()],
-      condition: conditions[Math.floor(Math.random() * conditions.length)],
-      temp: Math.floor(Math.random() * 20) + 10, // 10-30°C
-      description: "Forecast"
-    };
-  });
 }
