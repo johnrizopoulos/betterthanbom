@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { WeatherCondition } from "@/lib/weather-data";
@@ -12,6 +13,7 @@ export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
   const [inputValue, setInputValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLegend, setShowLegend] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,6 +79,17 @@ export default function Home() {
       getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
+        
+        {/* Header with Icons Button */}
+        <div className="flex justify-end">
+          <button
+            data-testid="button-icons-legend"
+            onClick={() => setShowLegend(true)}
+            className="p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </button>
+        </div>
         
         {/* Search Bar */}
         <motion.div 
@@ -259,6 +272,66 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Icons Legend Modal */}
+      <Dialog open={showLegend} onOpenChange={setShowLegend}>
+        <DialogContent className="bg-white/95 backdrop-blur-xl border border-white/40">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">What Do These Icons Mean?</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center min-w-[60px] h-[60px]">
+                <span className="text-3xl">☔</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">Umbrella</h3>
+                <p className="text-sm text-muted-foreground">Rainy or stormy weather – bring an umbrella!</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-pink-50 to-pink-100 flex items-center justify-center min-w-[60px] h-[60px]">
+                <span className="text-3xl">🧥</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">Jumper</h3>
+                <p className="text-sm text-muted-foreground">Cool weather (10–19°C) – wear a sweater or light jacket</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-cyan-50 to-cyan-100 flex items-center justify-center min-w-[60px] h-[60px]">
+                <span className="text-3xl">👕</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">T-Shirt</h3>
+                <p className="text-sm text-muted-foreground">Warm weather (20–27°C) – light, short sleeves are perfect</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center min-w-[60px] h-[60px]">
+                <span className="text-3xl">🎩</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">Hat</h3>
+                <p className="text-sm text-muted-foreground">Hot weather (&gt;28°C) – wear a hat and sunscreen</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-stone-50 to-stone-100 flex items-center justify-center min-w-[60px] h-[60px]">
+                <span className="text-3xl">🧤</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-foreground">Coat</h3>
+                <p className="text-sm text-muted-foreground">Cold weather (&lt;10°C) – bundle up! Winter coat recommended</p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
