@@ -1,100 +1,66 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
-import { WeatherCondition } from "@/lib/weather-data";
-import { cn } from "@/lib/utils";
-import weatherIcons from "@assets/image_1764585934042.png";
 
 interface WeatherIconProps {
-  condition: WeatherCondition;
-  temp?: number;
-  className?: string;
+  condition: string;
+  temp: number;
   size?: number;
   animate?: boolean;
+  className?: string;
 }
 
-type IconType = "umbrella" | "jumper" | "tshirt" | "hat" | "coat";
-
-const iconPositions: Record<IconType, { x: number; y: number }> = {
+const ICON_MAP: Record<string, { x: number; y: number }> = {
   umbrella: { x: 0, y: 0 },
-  jumper: { x: 50, y: 0 },
-  tshirt: { x: 100, y: 0 },
-  hat: { x: 25, y: 100 },
-  coat: { x: 75, y: 100 },
+  jumper: { x: 64, y: 0 },
+  tshirt: { x: 128, y: 0 },
+  hat: { x: 192, y: 0 },
+  coat: { x: 256, y: 0 },
 };
 
-function PixelIcon({ type, size }: { type: IconType; size: number }) {
-  const pos = iconPositions[type];
-  
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        backgroundImage: `url(${weatherIcons})`,
-        backgroundSize: "300% 200%",
-        backgroundPosition: `${pos.x}% ${pos.y}%`,
-        backgroundRepeat: "no-repeat",
-        imageRendering: "pixelated",
-      }}
-    />
-  );
+function getIconForWeather(condition: string, temp: number): keyof typeof ICON_MAP {
+  if (condition === "rain" || condition === "storm") {
+    return "umbrella";
+  }
+
+  if (temp < 10) {
+    return "coat";
+  } else if (temp >= 10 && temp < 20) {
+    return "jumper";
+  } else if (temp >= 20 && temp < 28) {
+    return "tshirt";
+  } else {
+    return "hat";
+  }
 }
 
-export function WeatherIcon({ condition, temp, className, size = 24, animate = true }: WeatherIconProps) {
-  const animationProps = animate ? {
-    initial: { scale: 0.8, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-    transition: { type: "spring" as const, stiffness: 200, damping: 15 }
-  } : {};
+const WeatherIconComponent = ({ condition, temp, size = 64, animate = true, className = "" }: WeatherIconProps) => {
+  const iconKey = getIconForWeather(condition, temp);
+  const position = ICON_MAP[iconKey];
 
-  const getIconType = (): IconType => {
-    // Rule 1: Raining -> Umbrella
-    if (["rain", "storm", "hail", "drizzle"].includes(condition)) {
-      return "umbrella";
-    }
-
-    // Check temperature rules if provided
-    if (temp !== undefined) {
-      // Rule 2: > 28c -> Sun hat
-      if (temp > 28) {
-        return "hat";
+  const MotionOrDiv = animate ? motion.div : "div";
+  const animationProps = animate
+    ? {
+        initial: { scale: 0.8, opacity: 0 },
+        animate: { scale: 1, opacity: 1 },
+        transition: { duration: 0.5, ease: "easeOut" },
       }
-      
-      // Rule 3: 20-27c -> T-shirt
-      if (temp >= 20 && temp <= 27) {
-        return "tshirt";
-      }
-
-      // Rule 4: 10-19c -> Jumper
-      if (temp >= 10 && temp <= 19) {
-        return "jumper";
-      }
-
-      // Rule 5: < 10c -> Stay inside (Coat)
-      if (temp < 10) {
-        return "coat";
-      }
-    }
-
-    // Fallback based on condition
-    switch (condition) {
-      case "clear":
-        return "hat";
-      case "partly-cloudy":
-      case "cloudy":
-        return "tshirt";
-      case "wind":
-        return "jumper";
-      case "snow":
-      case "fog":
-        return "coat";
-      default:
-        return "tshirt";
-    }
-  };
+    : {};
 
   return (
-    <motion.div {...animationProps} className={cn("flex items-center justify-center", className)}>
-      <PixelIcon type={getIconType()} size={size} />
-    </motion.div>
+    <MotionOrDiv {...animationProps} className={className}>
+      <div
+        style={{
+          width: size,
+          height: size,
+          backgroundImage: "url('/weather-icons-sprite.png')",
+          backgroundPosition: `-${position.x * (size / 64)}px -${position.y * (size / 64)}px`,
+          backgroundSize: `${320 * (size / 64)}px ${64 * (size / 64)}px`,
+          imageRendering: "pixelated",
+        }}
+      />
+    </MotionOrDiv>
   );
-}
+};
+
+// Memoize the component to prevent unnecessary re-renders
+export const WeatherIcon = memo(WeatherIconComponent);

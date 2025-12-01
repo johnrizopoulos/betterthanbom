@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,31 @@ import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import type { DailyForecast } from "@/lib/weather-data";
+
+// Memoized forecast day component to prevent unnecessary re-renders
+const ForecastDay = memo(({ day }: { day: DailyForecast }) => (
+  <div className="flex flex-col items-center gap-1 group cursor-default">
+    <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
+      {day.dayName.slice(0, 3)}
+    </span>
+    <div className="flex flex-col items-center gap-0 flex-1 justify-center min-h-[50px]">
+      <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300 h-[44px] flex items-center justify-center">
+        <WeatherIcon 
+          condition={day.condition} 
+          temp={day.temp}
+          size={28} 
+          animate={false} 
+        />
+      </div>
+      <span className="text-sm font-semibold text-foreground/80">
+        {day.temp}°
+      </span>
+    </div>
+  </div>
+));
+
+ForecastDay.displayName = 'ForecastDay';
 
 export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
@@ -14,6 +39,19 @@ export default function Home() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Memoize animation variants
+  const fadeInVariants = useMemo(() => ({
+    initial: { opacity: 0, y: -10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 }
+  }), []);
+
+  const weatherVariants = useMemo(() => ({
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 1.05 }
+  }), []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -26,7 +64,7 @@ export default function Home() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [inputValue, searchLocations]);
+  }, [inputValue]); // Remove searchLocations from deps - it's stable from useCallback
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,11 +76,11 @@ export default function Home() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelectLocation = (location: LocationResult) => {
+  const handleSelectLocation = useCallback((location: LocationResult) => {
     setInputValue("");
     setShowDropdown(false);
     selectLocation(location);
-  };
+  }, [selectLocation]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 bg-white dark:bg-slate-950">
@@ -94,9 +132,7 @@ export default function Home() {
           <AnimatePresence>
             {showDropdown && searchResults.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                {...fadeInVariants}
                 className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 overflow-hidden"
               >
                 {searchResults.map((location) => (
@@ -117,9 +153,7 @@ export default function Home() {
             )}
             {showDropdown && inputValue.length >= 2 && !isSearching && searchResults.length === 0 && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                {...fadeInVariants}
                 className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 p-4 text-center text-muted-foreground"
               >
                 No locations found
@@ -154,9 +188,7 @@ export default function Home() {
             ) : data ? (
               <motion.div
                 key="weather"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
+                {...weatherVariants}
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="flex flex-col items-center text-center w-full"
               >
@@ -225,25 +257,8 @@ export default function Home() {
               className="w-full bg-white/30 backdrop-blur-xl rounded-3xl p-3 shadow-lg border border-white/40"
             >
               <div className="grid grid-cols-7 gap-2">
-                {data.forecast.map((day, i) => (
-                  <div key={day.date} className="flex flex-col items-center gap-1 group cursor-default">
-                    <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      {day.dayName.slice(0, 3)}
-                    </span>
-                    <div className="flex flex-col items-center gap-0 flex-1 justify-center min-h-[50px]">
-                      <div className="p-2 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300 h-[44px] flex items-center justify-center">
-                        <WeatherIcon 
-                          condition={day.condition} 
-                          temp={day.temp}
-                          size={28} 
-                          animate={false} 
-                        />
-                      </div>
-                      <span className="text-sm font-semibold text-foreground/80">
-                        {day.temp}°
-                      </span>
-                    </div>
-                  </div>
+                {data.forecast.map((day) => (
+                  <ForecastDay key={day.date} day={day} />
                 ))}
               </div>
             </motion.div>
