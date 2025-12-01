@@ -115,41 +115,42 @@ export default function Home() {
                 </motion.div>
 
                 {/* Main Icon - The Hero */}
-                <div className="relative mb-16">
+                <div className="relative mb-16 flex flex-col items-center">
                    <div className={cn(
                      "absolute inset-0 blur-3xl opacity-40 rounded-full scale-150 transition-colors duration-1000",
                      data.current.condition === 'clear' ? "bg-amber-300" :
                      data.current.condition === 'rain' ? "bg-blue-300" :
                      "bg-slate-300"
                    )} />
-                   <div className="relative z-10 flex flex-col items-center">
+                   
+                   <div className="relative z-10">
                      <WeatherIcon 
                        condition={data.current.condition} 
                        temp={data.current.temp}
                        size={240} 
                        className="drop-shadow-2xl filter"
                      />
-                     
-                     {/* Current Temperature */}
-                     {data.current.temp !== undefined && (
-                       <motion.div 
-                         initial={{ opacity: 0, y: 10 }}
-                         animate={{ opacity: 1, y: 0 }}
-                         transition={{ delay: 0.2 }}
-                         className="absolute -bottom-4 -right-4 bg-white/60 backdrop-blur-md px-6 py-2 rounded-full shadow-lg border border-white/50"
-                       >
-                         <span className="text-5xl font-heading font-bold text-foreground tracking-tighter">
-                           {data.current.temp}°
-                         </span>
-                       </motion.div>
-                     )}
                    </div>
+                   
+                   {/* Current Temperature - Simple Text, No Overlay */}
+                   {data.current.temp !== undefined && (
+                     <motion.div 
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       transition={{ delay: 0.2 }}
+                       className="mt-6 relative z-10"
+                     >
+                       <span className="text-6xl md:text-7xl font-heading font-bold text-foreground tracking-tighter">
+                         {data.current.temp}°
+                       </span>
+                     </motion.div>
+                   )}
 
                    <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-12 text-3xl font-heading font-semibold text-foreground/80"
+                    className="mt-4 text-3xl font-heading font-medium text-muted-foreground relative z-10"
                    >
                      {data.current.description}
                    </motion.p>
