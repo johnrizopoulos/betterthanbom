@@ -46,7 +46,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 bg-white dark:bg-slate-950">
-      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
+      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-6">
         
         {/* Header Title */}
         <motion.div
