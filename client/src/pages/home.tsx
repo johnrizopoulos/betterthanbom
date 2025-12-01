@@ -80,6 +80,27 @@ export default function Home() {
     )}>
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
         
+        {/* Header Title */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-2"
+        >
+          <h1 className="text-3xl md:text-4xl font-bold tracking-wider"
+            style={{
+              backgroundImage: 'linear-gradient(90deg, #ff006e 0%, #fb5607 25%, #ffbe0b 50%, #8338ec 75%, #3a86ff 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(2px 2px 0px rgba(255,0,110,0.3))',
+              fontFamily: '"Courier New", monospace',
+              letterSpacing: '0.05em',
+            }}
+          >
+            BETTER THAN BoM
+          </h1>
+        </motion.div>
+        
         {/* Header with Icons Button */}
         <div className="flex justify-end">
           <button
