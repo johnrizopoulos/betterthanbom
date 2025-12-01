@@ -148,7 +148,7 @@ function getWeatherDescription(code: number): string {
 
 // Generate mock 7-day forecast
 function generateMockForecast() {
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const conditions = ['clear', 'partly-cloudy', 'cloudy', 'rain', 'wind'];
   
   return Array.from({ length: 7 }, (_, i) => {
