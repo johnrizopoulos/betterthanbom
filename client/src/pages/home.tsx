@@ -6,8 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { WeatherCondition } from "@/lib/weather-data";
-import { cn } from "@/lib/utils";
 
 export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
@@ -45,39 +43,8 @@ export default function Home() {
     selectLocation(location);
   };
 
-  const getBackgroundClass = (condition?: WeatherCondition, temp?: number) => {
-    if (!condition) return "from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-950";
-
-    if (temp !== undefined) {
-       if (temp < 10) return "from-stone-200 to-stone-100 dark:from-stone-900 dark:to-stone-950";
-       if (temp > 28) return "from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-950/40";
-    }
-
-    switch (condition) {
-      case "clear":
-        return "from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30";
-      case "partly-cloudy":
-        return "from-sky-50 to-white dark:from-sky-950/30 dark:to-slate-950/30";
-      case "cloudy":
-        return "from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800";
-      case "rain":
-        return "from-blue-50 to-slate-100 dark:from-blue-950/30 dark:to-slate-900";
-      case "storm":
-        return "from-purple-50 to-slate-200 dark:from-purple-950/30 dark:to-slate-900";
-      case "snow":
-        return "from-cyan-50 to-white dark:from-cyan-950/30 dark:to-slate-950";
-      case "wind":
-        return "from-teal-50 to-slate-100 dark:from-teal-950/30 dark:to-slate-900";
-      default:
-        return "from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-950";
-    }
-  };
-
   return (
-    <div className={cn(
-      "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
-      getBackgroundClass(data?.current.condition, data?.current.temp)
-    )}>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 bg-white dark:bg-slate-950">
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
         
         {/* Header Title */}
