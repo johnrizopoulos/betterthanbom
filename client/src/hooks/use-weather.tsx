@@ -1,24 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { WeatherData } from "@/lib/weather-data";
 import { useToast } from "@/hooks/use-toast";
+
+export interface LocationResult {
+  id: number;
+  name: string;
+  state: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  displayName: string;
+}
 
 export function useWeather() {
   const [data, setData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const { toast } = useToast();
 
   // Initial load - fetch Melbourne by default
   useEffect(() => {
-    fetchWeather("melbourne");
+    fetchWeatherByCoords(-37.8136, 144.9631, "Melbourne, VIC");
   }, []);
 
-  const fetchWeather = async (location: string) => {
+  const fetchWeatherByCoords = async (lat: number, lon: number, name: string) => {
     try {
       setIsLoading(true);
+      setSearchResults([]);
       
       // Fetch current weather
-      const currentResponse = await fetch(`/api/weather/current?location=${encodeURIComponent(location)}`);
+      const currentResponse = await fetch(
+        `/api/weather/current?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}`
+      );
       
       if (!currentResponse.ok) {
         const error = await currentResponse.json();
@@ -28,19 +42,21 @@ export function useWeather() {
       const currentData = await currentResponse.json();
       
       // Fetch forecast
-      const forecastResponse = await fetch(`/api/weather/forecast?location=${encodeURIComponent(location)}`);
+      const forecastResponse = await fetch(
+        `/api/weather/forecast?lat=${lat}&lon=${lon}`
+      );
       const forecastData = await forecastResponse.json();
       
       setData({
         ...currentData,
-        forecast: forecastData.forecast
+        forecast: forecastData.forecast || []
       });
       
     } catch (error) {
       console.error('Weather fetch error:', error);
       toast({
-        title: "Location not found",
-        description: error instanceof Error ? error.message : "Try Melbourne, Sydney, Brisbane, or Hobart.",
+        title: "Weather unavailable",
+        description: error instanceof Error ? error.message : "Failed to fetch weather data.",
         variant: "destructive",
       });
     } finally {
@@ -48,15 +64,42 @@ export function useWeather() {
     }
   };
 
-  const searchLocation = async (query: string) => {
-    setSearchQuery(query);
-    await fetchWeather(query);
+  const searchLocations = useCallback(async (query: string) => {
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const response = await fetch(`/api/weather/search?q=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+      
+      const data = await response.json();
+      setSearchResults(data.results || []);
+      
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  const selectLocation = async (location: LocationResult) => {
+    setSearchResults([]);
+    await fetchWeatherByCoords(location.latitude, location.longitude, location.displayName);
   };
 
   return {
     data,
     isLoading,
-    searchLocation,
-    searchQuery
+    searchResults,
+    isSearching,
+    searchLocations,
+    selectLocation,
   };
 }

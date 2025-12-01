@@ -1,31 +1,54 @@
-import { useState } from "react";
-import { useWeather } from "@/hooks/use-weather";
+import { useState, useEffect, useRef } from "react";
+import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { WeatherCondition } from "@/lib/weather-data";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const { data, isLoading, searchLocation } = useWeather();
+  const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
   const [inputValue, setInputValue] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      searchLocation(inputValue);
-    }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (inputValue.length >= 2) {
+        searchLocations(inputValue);
+        setShowDropdown(true);
+      } else {
+        setShowDropdown(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue, searchLocations]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelectLocation = (location: LocationResult) => {
+    setInputValue("");
+    setShowDropdown(false);
+    selectLocation(location);
   };
 
   const getBackgroundClass = (condition?: WeatherCondition, temp?: number) => {
     if (!condition) return "from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-950";
 
-    // Override background for specific "Feel" based on the new icons
     if (temp !== undefined) {
-       if (temp < 10) return "from-stone-200 to-stone-100 dark:from-stone-900 dark:to-stone-950"; // Cozy/Inside
-       if (temp > 28) return "from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-950/40"; // Hot
+       if (temp < 10) return "from-stone-200 to-stone-100 dark:from-stone-900 dark:to-stone-950";
+       if (temp > 28) return "from-amber-100 to-orange-50 dark:from-amber-900/40 dark:to-orange-950/40";
     }
 
     switch (condition) {
@@ -56,22 +79,63 @@ export default function Home() {
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-2">
         
         {/* Search Bar */}
-        <motion.form 
+        <motion.div 
+          ref={searchRef}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          onSubmit={handleSearch} 
-          className="relative w-full z-10"
+          className="relative w-full z-20"
         >
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input 
+              data-testid="input-search"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Search suburb or postcode..." 
-              className="pl-10 h-12 rounded-full bg-white/40 border-white/40 shadow-sm hover:bg-white/60 focus:bg-white/80 backdrop-blur-md transition-all duration-300 text-base placeholder:text-muted-foreground/70"
+              placeholder="Search any Australian suburb..." 
+              className="pl-10 pr-10 h-12 rounded-full bg-white/40 border-white/40 shadow-sm hover:bg-white/60 focus:bg-white/80 backdrop-blur-md transition-all duration-300 text-base placeholder:text-muted-foreground/70"
             />
+            {isSearching && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+            )}
           </div>
-        </motion.form>
+          
+          {/* Search Results Dropdown */}
+          <AnimatePresence>
+            {showDropdown && searchResults.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 overflow-hidden"
+              >
+                {searchResults.map((location) => (
+                  <button
+                    key={location.id}
+                    data-testid={`button-location-${location.id}`}
+                    onClick={() => handleSelectLocation(location)}
+                    className="w-full px-4 py-3 text-left hover:bg-white/60 transition-colors flex items-center gap-3 border-b border-white/20 last:border-b-0"
+                  >
+                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-foreground">{location.name}</p>
+                      <p className="text-sm text-muted-foreground">{location.state}</p>
+                    </div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+            {showDropdown && inputValue.length >= 2 && !isSearching && searchResults.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 p-4 text-center text-muted-foreground"
+              >
+                No locations found
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] relative">
           <AnimatePresence mode="wait">
@@ -84,7 +148,7 @@ export default function Home() {
                 className="flex flex-col items-center gap-4"
               >
                 <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                <p className="text-muted-foreground animate-pulse font-medium">Locating...</p>
+                <p className="text-muted-foreground animate-pulse font-medium">Loading weather...</p>
               </motion.div>
             ) : data ? (
               <motion.div
@@ -106,7 +170,7 @@ export default function Home() {
                     <MapPin className="h-4 w-4" />
                     <span className="text-sm font-medium tracking-wide uppercase">Current Location</span>
                   </div>
-                  <h1 className="text-4xl md:text-5xl text-foreground tracking-tight font-bold">
+                  <h1 data-testid="text-location" className="text-4xl md:text-5xl text-foreground tracking-tight font-bold">
                     {data.location.split(',')[0]}
                   </h1>
                   <p className="text-lg text-muted-foreground font-medium">
@@ -132,7 +196,7 @@ export default function Home() {
                      />
                    </div>
                    
-                   {/* Current Temperature - Simple Text, No Overlay */}
+                   {/* Current Temperature */}
                    {data.current.temp !== undefined && (
                      <motion.div 
                        initial={{ opacity: 0, y: 10 }}
@@ -140,8 +204,8 @@ export default function Home() {
                        transition={{ delay: 0.2 }}
                        className="mt-1 relative z-10"
                      >
-                       <span className="text-6xl md:text-7xl font-heading font-bold text-foreground tracking-tighter">
-                         {data.current.temp}°
+                       <span data-testid="text-temperature" className="text-6xl md:text-7xl font-heading font-bold text-foreground tracking-tighter">
+                         {Math.round(data.current.temp)}°
                        </span>
                      </motion.div>
                    )}
@@ -162,7 +226,7 @@ export default function Home() {
 
         {/* Forecast Row */}
         <AnimatePresence>
-          {!isLoading && data && (
+          {!isLoading && data && data.forecast && data.forecast.length > 0 && (
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
