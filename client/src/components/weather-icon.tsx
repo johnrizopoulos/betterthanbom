@@ -13,18 +13,64 @@ import {
   Umbrella,
   Home,
   Shirt,
-  Tent, // Using as closest thing to a "Hat" or maybe just use Emoji
 } from "lucide-react";
 import { WeatherCondition } from "@/lib/weather-data";
 import { cn } from "@/lib/utils";
 
 interface WeatherIconProps {
   condition: WeatherCondition;
-  temp?: number; // Optional because forecast logic might not always have it, but our data does now
+  temp?: number;
   className?: string;
   size?: number;
   animate?: boolean;
 }
+
+// Custom SVG Icons to match Lucide style
+const SunHat = ({ size, className }: { size: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="1.5" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    {/* Hat Crown */}
+    <path d="M7 14V10a5 5 0 0 1 10 0v4" />
+    {/* Brim */}
+    <path d="M2 14h20c0 2.5-4.5 4-10 4S2 16.5 2 14Z" />
+    {/* Ribbon/Band */}
+    <path d="M7 14h10" />
+  </svg>
+);
+
+const Hoodie = ({ size, className }: { size: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="1.5" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    {/* Hood */}
+    <path d="M12 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5Z" />
+    {/* Body */}
+    <path d="M4 10v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9" />
+    {/* Sleeves */}
+    <path d="M4 10l-2 5" />
+    <path d="M20 10l2 5" />
+    {/* Pocket/Zipper detail */}
+    <path d="M12 14v4" />
+    <path d="M9 18h6" />
+  </svg>
+);
 
 export function WeatherIcon({ condition, temp, className, size = 24, animate = true }: WeatherIconProps) {
   const iconProps = {
@@ -48,21 +94,17 @@ export function WeatherIcon({ condition, temp, className, size = 24, animate = t
     if (temp !== undefined) {
       // Rule 2: > 28c -> Wide brim hat
       if (temp > 28) {
-        // Using emoji for specificity as Lucide lacks a good "Sun Hat"
-        return <span style={{ fontSize: size }} role="img" aria-label="Sun Hat">👒</span>;
+        return <SunHat {...iconProps} className={cn(iconProps.className, "text-amber-500 fill-amber-100")} />;
       }
       
       // Rule 3: 20-27c -> T-shirt
       if (temp >= 20 && temp <= 27) {
-         // Lucide has a Shirt icon
          return <Shirt {...iconProps} className={cn(iconProps.className, "text-orange-400 fill-orange-50")} />;
       }
 
-      // Rule 4: 10-19c -> Jumper
+      // Rule 4: 10-19c -> Hoodie/Jumper
       if (temp >= 10 && temp <= 19) {
-        // Using emoji for "Coat" as closest to Jumper/Jacket visually in emoji set, or maybe a generic "Shirt" with different color?
-        // Let's use the Coat emoji for distinctness
-        return <span style={{ fontSize: size }} role="img" aria-label="Coat">🧥</span>;
+        return <Hoodie {...iconProps} className={cn(iconProps.className, "text-indigo-400 fill-indigo-50")} />;
       }
 
       // Rule 5: < 10c -> Stay inside (House)
@@ -71,8 +113,7 @@ export function WeatherIcon({ condition, temp, className, size = 24, animate = t
       }
     }
 
-    // Fallback to original condition logic if no temp or conditions not met (though logic above covers all temps if temp is present)
-    // This handles cases where we might just display raw condition without temp logic if needed
+    // Fallback
     switch (condition) {
       case "clear":
         return <Sun {...iconProps} className={cn(iconProps.className, "text-amber-400 fill-amber-400/20")} />;
