@@ -44,8 +44,8 @@ const SunHat = ({ size, className }: { size: number; className?: string }) => (
   </svg>
 );
 
-// Option 1: Classic Hoodie
-export const ClassicHoodie = ({ size, className }: { size: number; className?: string }) => (
+// The Classic Hoodie (Default Choice for now)
+const Hoodie = ({ size, className }: { size: number; className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M12 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5Z" />
     <path d="M4 10v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9" />
@@ -54,57 +54,6 @@ export const ClassicHoodie = ({ size, className }: { size: number; className?: s
     <path d="M9 16h6c0 2-1.5 3-3 3s-3-1-3-3Z" /> {/* Kangaroo pocket hint */}
     <path d="M10 7v3" /> {/* Drawstring */}
     <path d="M14 7v3" /> {/* Drawstring */}
-  </svg>
-);
-
-// Option 2: Crewneck Jumper
-export const Crewneck = ({ size, className }: { size: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 4a4 4 0 0 0-4 4v1h8V8a4 4 0 0 0-4-4Z" /> {/* Neck area */}
-    <path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
-    <path d="M4 9l-2 5" />
-    <path d="M20 9l2 5" />
-    <path d="M8 4c0 2 1.8 3 4 3s4-1 4-3" /> {/* Collar line */}
-    <path d="M6 21h12" /> {/* Hem ribbing hint */}
-  </svg>
-);
-
-// Option 3: Zip-Up Hoodie
-export const ZipUp = ({ size, className }: { size: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2a5 5 0 0 0-5 5v3h10V7a5 5 0 0 0-5-5Z" />
-    <path d="M4 10v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9" />
-    <path d="M4 10l-2 5" />
-    <path d="M20 10l2 5" />
-    <path d="M12 10v11" /> {/* Zipper line */}
-    <path d="M8 16h-2" /> {/* Pocket */}
-    <path d="M16 16h2" /> {/* Pocket */}
-  </svg>
-);
-
-// Option 4: Chunky Knit
-export const ChunkyKnit = ({ size, className }: { size: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
-    <path d="M4 9l-2 5" />
-    <path d="M20 9l2 5" />
-    <path d="M8 4c0 2 1.8 3 4 3s4-1 4-3" />
-    <path d="M12 4v5" />
-    <path d="M8 12l4 4 4-4" /> {/* Knit pattern */}
-    <path d="M8 16l4 4 4-4" /> {/* Knit pattern */}
-  </svg>
-);
-
-// Option 5: Windbreaker
-export const Windbreaker = ({ size, className }: { size: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
-    <path d="M4 8l8-4 8 4" /> {/* High collar/shoulder line */}
-    <path d="M12 4v17" /> {/* Zipper */}
-    <path d="M4 10l-2 4" />
-    <path d="M20 10l2 4" />
-    <path d="M7 8l5 5" /> {/* Collar detail */}
-    <path d="M17 8l-5 5" /> {/* Collar detail */}
   </svg>
 );
 
@@ -138,9 +87,9 @@ export function WeatherIcon({ condition, temp, className, size = 24, animate = t
          return <Shirt {...iconProps} className={cn(iconProps.className, "text-orange-400 fill-orange-50")} />;
       }
 
-      // Rule 4: 10-19c -> Currently using Classic Hoodie as default
+      // Rule 4: 10-19c -> Hoodie/Jumper
       if (temp >= 10 && temp <= 19) {
-        return <ClassicHoodie {...iconProps} className={cn(iconProps.className, "text-indigo-400 fill-indigo-50")} />;
+        return <Hoodie {...iconProps} className={cn(iconProps.className, "text-indigo-400 fill-indigo-50")} />;
       }
 
       // Rule 5: < 10c -> Stay inside (House)

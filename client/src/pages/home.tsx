@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useWeather } from "@/hooks/use-weather";
-import { WeatherIcon, ClassicHoodie, Crewneck, ZipUp, ChunkyKnit, Windbreaker } from "@/components/weather-icon";
+import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, X } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { WeatherCondition } from "@/lib/weather-data";
@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   const { data, isLoading, searchLocation } = useWeather();
   const [inputValue, setInputValue] = useState("");
-  const [showIconShowcase, setShowIconShowcase] = useState(true);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,40 +53,6 @@ export default function Home() {
       "min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-1000 bg-gradient-to-br",
       getBackgroundClass(data?.current.condition, data?.current.temp)
     )}>
-      
-      {/* Icon Selection Modal / Overlay */}
-      <AnimatePresence>
-        {showIconShowcase && (
-          <motion.div 
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 bg-white/90 backdrop-blur-xl shadow-2xl border border-white/50 rounded-3xl p-6"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-lg">Choose Your Jumper</h3>
-              <button onClick={() => setShowIconShowcase(false)} className="p-1 hover:bg-black/5 rounded-full">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { Icon: ClassicHoodie, label: "Classic Hoodie" },
-                { Icon: Crewneck, label: "Crewneck" },
-                { Icon: ZipUp, label: "Zip-Up" },
-                { Icon: ChunkyKnit, label: "Chunky Knit" },
-                { Icon: Windbreaker, label: "Windbreaker" },
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 p-2 rounded-xl hover:bg-black/5 cursor-pointer transition-colors">
-                  <item.Icon size={40} className="text-indigo-500" />
-                  <span className="text-[10px] font-medium text-center uppercase tracking-wide text-muted-foreground">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-8">
         
         {/* Search Bar */}
