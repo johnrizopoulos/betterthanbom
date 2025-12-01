@@ -282,7 +282,7 @@ export default function Home() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
               <div className="p-3 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <span className="text-3xl">☔</span>
+                <WeatherIcon condition="rain" temp={15} size={44} animate={false} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Umbrella</h3>
@@ -292,7 +292,7 @@ export default function Home() {
 
             <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
               <div className="p-3 rounded-lg bg-gradient-to-br from-pink-50 to-pink-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <span className="text-3xl">🧥</span>
+                <WeatherIcon condition="partly-cloudy" temp={15} size={44} animate={false} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Jumper</h3>
@@ -302,7 +302,7 @@ export default function Home() {
 
             <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
               <div className="p-3 rounded-lg bg-gradient-to-br from-cyan-50 to-cyan-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <span className="text-3xl">👕</span>
+                <WeatherIcon condition="clear" temp={23} size={44} animate={false} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">T-Shirt</h3>
@@ -312,7 +312,7 @@ export default function Home() {
 
             <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
               <div className="p-3 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <span className="text-3xl">🎩</span>
+                <WeatherIcon condition="clear" temp={30} size={44} animate={false} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Hat</h3>
@@ -322,7 +322,7 @@ export default function Home() {
 
             <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
               <div className="p-3 rounded-lg bg-gradient-to-br from-stone-50 to-stone-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <span className="text-3xl">🧤</span>
+                <WeatherIcon condition="snow" temp={5} size={44} animate={false} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Coat</h3>
