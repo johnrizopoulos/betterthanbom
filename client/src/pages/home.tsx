@@ -86,18 +86,22 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-2"
         >
-          <h1 className="text-3xl md:text-4xl font-bold tracking-wider"
+          <h1 className="text-3xl md:text-4xl font-bold"
             style={{
-              backgroundImage: 'linear-gradient(90deg, #ff006e 0%, #fb5607 25%, #ffbe0b 50%, #8338ec 75%, #3a86ff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(2px 2px 0px rgba(255,0,110,0.3))',
-              fontFamily: '"Courier New", monospace',
-              letterSpacing: '0.05em',
+              color: '#001a4d',
+              fontFamily: '"MS DOS", "Perfect DOS VGA 437", "Courier New", monospace',
+              letterSpacing: '0.15em',
+              textShadow: `
+                2px 2px 0px #003d99,
+                4px 4px 0px #0066ff,
+                1px 1px 0px #001a4d
+              `,
+              fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+              fontWeight: 900,
+              lineHeight: 1,
             }}
           >
-            BETTER THAN BoM
+            &gt; BETTER THAN BoM
           </h1>
         </motion.div>
         
