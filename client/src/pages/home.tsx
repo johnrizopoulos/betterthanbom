@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
