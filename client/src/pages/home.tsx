@@ -311,6 +311,9 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground mt-2 pt-3 border-t border-border/40">
+            Weather data sourced from Open-Meteo. This app is not affiliated with or sourced from the Bureau of Meteorology (bom.gov.au). Temperatures and conditions may vary slightly from BoM forecasts.
+          </p>
         </DialogContent>
       </Dialog>
     </div>
