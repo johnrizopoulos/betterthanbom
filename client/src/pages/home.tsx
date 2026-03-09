@@ -256,7 +256,7 @@ export default function Home() {
                        className="relative z-10"
                      >
                        <span data-testid="text-temperature" className="font-heading font-bold text-foreground tracking-tighter" style={{ fontSize: 'clamp(2.5rem, 8vh, 4.5rem)' }}>
-                         {Math.round(data.current.temp)}°
+                         {Math.round(data.current.temp)}<span style={{ fontFamily: 'Arial, sans-serif' }}>°</span>
                        </span>
                      </motion.div>
                    )}
@@ -301,10 +301,10 @@ export default function Home() {
                         />
                       </div>
                       <span className="text-sm font-semibold text-foreground/80">
-                        {day.temp}°
+                        {day.temp}<span style={{ fontFamily: 'Arial, sans-serif' }}>°</span>
                       </span>
                       <span className="text-[10px] text-muted-foreground">
-                        {day.tempMin}°
+                        {day.tempMin}<span style={{ fontFamily: 'Arial, sans-serif' }}>°</span>
                       </span>
                     </div>
                   </div>
