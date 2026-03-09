@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: 'Inter', sans-serif;
-  --font-heading: 'Outfit', sans-serif;
+  --font-sans: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
+  --font-heading: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -35,19 +35,19 @@
 :root {
   /* Soft Pop / Airy Theme */
   --background: 210 40% 96%; /* Soft Cloud Blue/Grey */
-  --foreground: 222 47% 11%; /* Deep Blue/Black */
+  --foreground: 0 0% 0%; /* Black */
 
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 0 0% 0%;
 
   --primary: 221 83% 53%; /* Bright Blue */
   --primary-foreground: 210 40% 98%;
 
   --muted: 210 40% 90%;
-  --muted-foreground: 215 16% 47%;
+  --muted-foreground: 0 0% 0%;
 
   --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
+  --accent-foreground: 0 0% 0%;
 
   --border: 214 32% 91%;
   --input: 214 32% 91%;

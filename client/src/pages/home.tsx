@@ -58,7 +58,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-1"
         >
-          <h1 className="font-bold text-[#3737B3] whitespace-nowrap"
+          <h1 className="font-bold text-black whitespace-nowrap"
             style={{
               fontFamily: '"DrSeuss-ExtraBold", "DrSeuss-Bold", "DrSeuss-Light", "Comic Sans MS", cursive',
               letterSpacing: '0.02em',
