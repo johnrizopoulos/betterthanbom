@@ -1,6 +1,6 @@
 # Better than BoM - Weather Application
 
-## Version 1.2
+## Version 1.3
 
 **Release Date:** March 9, 2026
 
@@ -117,6 +117,11 @@ The app displays different pixel-art icons based on weather conditions:
 ```
 
 ## Recent Changes
+
+### V1.3 (March 9, 2026)
+1. **Progressive Web App (PWA)** - Installable on Android and iOS via "Add to Home Screen", offline caching, standalone mode
+2. **Dr Seuss Header Theme** - Whimsical Comic Sans font with dual-color text shadow
+3. **Centre-Aligned Layout** - All components centred on screen
 
 ### V1.2 (March 9, 2026)
 1. **Dynamic Animated Backgrounds** - Weather-responsive gradients with particle effects (rain, clouds, sun rays, snow, fog, frost, storm flash)
