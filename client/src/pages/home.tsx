@@ -58,12 +58,15 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-2"
         >
-          <h1 className="font-bold text-[#3737B3] text-[55px]"
+          <h1 className="font-bold text-[#3737B3] whitespace-nowrap"
             style={{
-              fontFamily: '"MS DOS", "Perfect DOS VGA 437", "Courier New", monospace',
-              letterSpacing: '0.15em',
+              fontFamily: '"Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive',
+              letterSpacing: '0.02em',
               fontWeight: 900,
               lineHeight: 1,
+              fontSize: 'clamp(28px, 8vw, 55px)',
+              fontStyle: 'italic',
+              textShadow: '2px 2px 0px #ff6b6b, -1px -1px 0px #4ecdc4',
             }}
           >
             Better Than BoM
