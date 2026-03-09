@@ -83,6 +83,9 @@
     font-family: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive !important;
     color: black;
   }
+  .degree-symbol {
+    font-family: Arial, sans-serif !important;
+  }
   body {
     @apply antialiased bg-background min-h-screen;
   }
