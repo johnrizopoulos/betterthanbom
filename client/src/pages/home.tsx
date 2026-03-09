@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <div className="h-dvh w-full flex flex-col items-center justify-center px-4 py-2 md:px-6 md:py-3 relative overflow-hidden">
       <WeatherBackground condition={data?.current.condition} temp={data?.current.temp} />
-      <div className="w-full max-w-md flex flex-col items-center h-full gap-1 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center gap-1 relative z-10">
         
         {/* Header Title */}
         <motion.div
@@ -175,7 +175,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-start min-h-0 relative w-full gap-0 pt-2">
+        <div className="flex flex-col items-center relative w-full gap-0">
           <AnimatePresence mode="wait">
             {isLoading ? (
               <motion.div 
