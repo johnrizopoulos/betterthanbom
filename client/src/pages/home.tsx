@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative">
       <WeatherBackground condition={data?.current.condition} temp={data?.current.temp} />
-      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-6 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center h-full max-h-[900px] gap-6 relative z-10">
         
         {/* Header Title */}
         <motion.div
@@ -74,7 +74,7 @@ export default function Home() {
         </motion.div>
         
         {/* Search Bar with Help Button */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full justify-center">
           <motion.div 
             ref={searchRef}
             initial={{ opacity: 0, y: -20 }}
@@ -145,7 +145,7 @@ export default function Home() {
 
         {/* Favorites Bar */}
         {favorites.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap justify-center w-full">
             {favorites.map((fav) => (
               <div
                 key={fav.id}
