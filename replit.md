@@ -21,9 +21,11 @@ Better than BoM is an Australian weather application that provides current weath
 ## User Preferences
 
 - Preferred communication style: Simple, everyday language
-- Design preference: Pixel art aesthetic, 90s computer style
-- Header style: Dark blue, monospace font, no shadow effects
+- Design preference: Pixel art aesthetic, Dr Seuss whimsical style
+- Font: DrSeuss-ExtraBold (CDN), applied globally to all text, black only
+- Header style: Italic, dual-color text shadow (coral red + teal), Dr Seuss font
 - Background: Dynamic gradients and particle effects matching weather
+- Layout: Tight vertical spacing, no flex-grow gaps — content flows naturally without large empty spaces between components
 
 ## Outfit Icon Logic
 
