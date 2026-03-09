@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
+import { useFavorites } from "@/hooks/use-favorites";
 import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, MapPin, Loader2, HelpCircle } from "lucide-react";
+import { Search, MapPin, Loader2, HelpCircle, Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation } = useWeather();
+  const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation, currentLocation } = useWeather();
+  const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites();
   const [inputValue, setInputValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
@@ -138,6 +140,39 @@ export default function Home() {
           </button>
         </div>
 
+        {/* Favorites Bar */}
+        {favorites.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {favorites.map((fav) => (
+              <div
+                key={fav.id}
+                className={cn(
+                  "group flex items-center gap-1 rounded-full text-xs font-medium transition-all duration-200 border",
+                  currentLocation?.id === fav.id
+                    ? "bg-foreground/10 border-foreground/20 text-foreground"
+                    : "bg-white/30 border-white/40 text-muted-foreground hover:bg-white/50"
+                )}
+              >
+                <button
+                  data-testid={`button-favorite-${fav.id}`}
+                  onClick={() => selectLocation(fav)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-full"
+                >
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span>{fav.name}</span>
+                </button>
+                <button
+                  data-testid={`button-remove-favorite-${fav.id}`}
+                  onClick={() => removeFavorite(fav.id)}
+                  className="pr-2 opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] relative">
           <AnimatePresence mode="wait">
             {isLoading ? (
@@ -167,9 +202,33 @@ export default function Home() {
                   transition={{ delay: 0.1 }}
                   className="mb-2 space-y-0"
                 >
-                  <h1 data-testid="text-location" className="text-4xl md:text-5xl text-foreground tracking-tight font-bold">
-                    {data.location.split(',')[0]}
-                  </h1>
+                  <div className="flex items-center justify-center gap-2">
+                    <h1 data-testid="text-location" className="text-4xl md:text-5xl text-foreground tracking-tight font-bold">
+                      {data.location.split(',')[0]}
+                    </h1>
+                    {currentLocation && (
+                      <button
+                        data-testid="button-toggle-favorite"
+                        onClick={() => {
+                          if (isFavorite(currentLocation.id)) {
+                            removeFavorite(currentLocation.id);
+                          } else {
+                            addFavorite(currentLocation);
+                          }
+                        }}
+                        className="p-1.5 rounded-full hover:bg-white/30 transition-colors"
+                      >
+                        <Star
+                          className={cn(
+                            "h-5 w-5 transition-colors",
+                            isFavorite(currentLocation.id)
+                              ? "fill-amber-400 text-amber-400"
+                              : "text-muted-foreground hover:text-amber-400"
+                          )}
+                        />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-lg text-muted-foreground font-medium">
                     {format(new Date(), "EEEE, d MMMM")}
                   </p>

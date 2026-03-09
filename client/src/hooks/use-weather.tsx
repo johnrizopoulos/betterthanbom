@@ -17,10 +17,21 @@ export function useWeather() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<LocationResult | null>(null);
   const { toast } = useToast();
 
   // Initial load - fetch Melbourne by default
   useEffect(() => {
+    const defaultLocation: LocationResult = {
+      id: 2158177,
+      name: "Melbourne",
+      state: "Victoria",
+      country: "Australia",
+      latitude: -37.8136,
+      longitude: 144.9631,
+      displayName: "Melbourne, VIC",
+    };
+    setCurrentLocation(defaultLocation);
     fetchWeatherByCoords(-37.8136, 144.9631, "Melbourne, VIC");
   }, []);
 
@@ -90,6 +101,7 @@ export function useWeather() {
   }, []);
 
   const selectLocation = async (location: LocationResult) => {
+    setCurrentLocation(location);
     setSearchResults([]);
     await fetchWeatherByCoords(location.latitude, location.longitude, location.displayName);
   };
@@ -101,5 +113,6 @@ export function useWeather() {
     isSearching,
     searchLocations,
     selectLocation,
+    currentLocation,
   };
 }
