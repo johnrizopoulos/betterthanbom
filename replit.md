@@ -14,7 +14,7 @@ Better than BoM is an Australian weather application that provides current weath
 - Pixel-art outfit icons based on temperature and weather conditions
 - 7-day forecast with daily min/max temperatures and outfit recommendations
 - Favorite locations saved in browser for quick access
-- Clean, minimal white background design
+- Dynamic animated backgrounds matching weather conditions (gradients + particle effects)
 - Retro 90s computer-style header
 - Data source disclaimer (not affiliated with BoM)
 
@@ -23,7 +23,7 @@ Better than BoM is an Australian weather application that provides current weath
 - Preferred communication style: Simple, everyday language
 - Design preference: Pixel art aesthetic, 90s computer style
 - Header style: Dark blue, monospace font, no shadow effects
-- Background: Clean white, no dynamic color changes
+- Background: Dynamic gradients and particle effects matching weather
 
 ## Outfit Icon Logic
 
@@ -54,6 +54,7 @@ The app displays different pixel-art icons based on weather conditions:
 
 **Key Components:**
 - `client/src/pages/home.tsx` - Main weather display page
+- `client/src/components/weather-background.tsx` - Dynamic animated background
 - `client/src/components/weather-icon.tsx` - Pixel art icon renderer
 - `client/src/hooks/use-weather.tsx` - Weather data fetching hook
 - `client/src/hooks/use-favorites.tsx` - Favorites management hook (localStorage)
@@ -118,9 +119,10 @@ The app displays different pixel-art icons based on weather conditions:
 ## Recent Changes
 
 ### V1.2 (March 9, 2026)
-1. **Favorite Locations** - Save locations with star button, quick-access favorites bar below search
-2. **Min/Max Temperatures** - Forecast now shows both daily minimum and maximum temperatures
-3. **Data Source Disclaimer** - Help modal explains data comes from Open-Meteo, not BoM
+1. **Dynamic Animated Backgrounds** - Weather-responsive gradients with particle effects (rain, clouds, sun rays, snow, fog, frost, storm flash)
+2. **Favorite Locations** - Save locations with star button, quick-access favorites bar below search
+3. **Min/Max Temperatures** - Forecast now shows both daily minimum and maximum temperatures
+4. **Data Source Disclaimer** - Help modal explains data comes from Open-Meteo, not BoM
 
 ### V1.1 (December 1, 2025)
 1. **Header Styling** - "Better Than BoM" title with 90s computer font (dark blue, Courier New monospace)

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { useFavorites } from "@/hooks/use-favorites";
+import { WeatherBackground } from "@/components/weather-background";
 import { WeatherIcon } from "@/components/weather-icon";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -47,8 +48,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 bg-white dark:bg-slate-950">
-      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-6">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative">
+      <WeatherBackground condition={data?.current.condition} temp={data?.current.temp} />
+      <div className="w-full max-w-md flex flex-col h-full max-h-[900px] gap-6 relative z-10">
         
         {/* Header Title */}
         <motion.div
