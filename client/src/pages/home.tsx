@@ -58,12 +58,10 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-2"
         >
-          <h1 className="md:text-4xl font-bold text-[#3737B3] bg-[transparent] text-[55px]"
+          <h1 className="font-bold text-[#3737B3] text-[55px]"
             style={{
-              color: '#001a4d',
               fontFamily: '"MS DOS", "Perfect DOS VGA 437", "Courier New", monospace',
               letterSpacing: '0.15em',
-              fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
               fontWeight: 900,
               lineHeight: 1,
             }}
