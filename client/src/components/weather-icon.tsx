@@ -7,7 +7,7 @@ interface WeatherIconProps {
   condition: WeatherCondition;
   temp?: number;
   className?: string;
-  size?: number;
+  size?: number | "auto";
   animate?: boolean;
 }
 
@@ -21,14 +21,15 @@ const iconPositions: Record<IconType, { x: number; y: number }> = {
   coat: { x: 75, y: 100 },
 };
 
-function PixelIcon({ type, size }: { type: IconType; size: number }) {
+function PixelIcon({ type, size }: { type: IconType; size: number | "auto" }) {
   const pos = iconPositions[type];
+  const isAuto = size === "auto";
   
   return (
     <div
       style={{
-        width: size,
-        height: size,
+        width: isAuto ? "100%" : size,
+        height: isAuto ? "100%" : size,
         backgroundImage: `url(${weatherIcons})`,
         backgroundSize: "300% 200%",
         backgroundPosition: `${pos.x}% ${pos.y}%`,
