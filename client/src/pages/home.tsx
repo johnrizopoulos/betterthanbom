@@ -175,7 +175,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-center min-h-0 relative w-full gap-0">
+        <div className="flex-1 flex flex-col items-center justify-start min-h-0 relative w-full gap-0 pt-2">
           <AnimatePresence mode="wait">
             {isLoading ? (
               <motion.div 
