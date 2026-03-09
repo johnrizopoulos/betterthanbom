@@ -48,15 +48,15 @@ export default function Home() {
   };
 
   return (
-    <div className="h-dvh w-full flex flex-col items-center justify-center p-4 md:p-6 relative overflow-hidden">
+    <div className="h-dvh w-full flex flex-col items-center justify-center px-4 py-2 md:px-6 md:py-3 relative overflow-hidden">
       <WeatherBackground condition={data?.current.condition} temp={data?.current.temp} />
-      <div className="w-full max-w-md flex flex-col items-center h-full gap-3 relative z-10">
+      <div className="w-full max-w-md flex flex-col items-center h-full gap-1 relative z-10">
         
         {/* Header Title */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-1"
+          className="text-center"
         >
           <h1 className="font-bold text-black whitespace-nowrap"
             style={{
@@ -87,7 +87,7 @@ export default function Home() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Search any Australian suburb..." 
-              className="pl-10 pr-10 h-12 rounded-full bg-white/40 border-white/40 shadow-sm hover:bg-white/60 focus:bg-white/80 backdrop-blur-md transition-all duration-300 text-base placeholder:text-muted-foreground/70"
+              className="pl-10 pr-10 h-10 rounded-full bg-white/40 border-white/40 shadow-sm hover:bg-white/60 focus:bg-white/80 backdrop-blur-md transition-all duration-300 text-base placeholder:text-muted-foreground/70"
             />
             {isSearching && (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
@@ -202,7 +202,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="mb-2 space-y-0"
+                  className="mb-0 space-y-0"
                 >
                   <div className="flex items-center justify-center gap-2">
                     <h1 data-testid="text-location" className="text-foreground tracking-tight font-bold" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
