@@ -60,7 +60,6 @@ export default function Home() {
         >
           <h1 className="font-bold text-black whitespace-nowrap"
             style={{
-              fontFamily: '"DrSeuss-ExtraBold", "DrSeuss-Bold", "DrSeuss-Light", "Comic Sans MS", cursive',
               letterSpacing: '0.02em',
               fontWeight: 900,
               lineHeight: 1,
