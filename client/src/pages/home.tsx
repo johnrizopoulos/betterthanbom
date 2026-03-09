@@ -375,6 +375,19 @@ export default function Home() {
           <p className="text-xs text-muted-foreground mt-2 pt-3 border-t border-border/40">
             Weather data sourced from Open-Meteo. This app is not affiliated with or sourced from the Bureau of Meteorology (bom.gov.au). Temperatures and conditions may vary slightly from BoM forecasts.
           </p>
+          <div className="mt-3 pt-3 border-t border-border/40">
+            <h3 className="font-bold text-sm text-foreground mb-2">Install on Your Phone</h3>
+            <div className="space-y-2 text-xs text-muted-foreground">
+              <div>
+                <p className="font-semibold text-foreground/80">Android (Chrome):</p>
+                <p>Tap the menu (three dots) at the top right, then tap "Add to Home Screen" or "Install App".</p>
+              </div>
+              <div>
+                <p className="font-semibold text-foreground/80">iPhone (Safari):</p>
+                <p>Tap the Share button (square with arrow) at the bottom, scroll down and tap "Add to Home Screen".</p>
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
