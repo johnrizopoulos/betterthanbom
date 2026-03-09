@@ -175,7 +175,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-center min-h-0 relative w-full">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 relative w-full gap-0">
           <AnimatePresence mode="wait">
             {isLoading ? (
               <motion.div 
@@ -195,7 +195,7 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.05 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex flex-col items-center text-center w-full"
+                className="flex flex-col items-center text-center w-full gap-0"
               >
                 {/* Location Info */}
                 <motion.div 
@@ -237,9 +237,9 @@ export default function Home() {
                 </motion.div>
 
                 {/* Main Icon - The Hero */}
-                <div className="relative flex flex-col items-center" style={{ marginBottom: 'clamp(0px, 1vh, 8px)' }}>
+                <div className="relative flex flex-col items-center gap-0" style={{ marginBottom: 0 }}>
                    
-                   <div className="relative z-10" style={{ width: 'clamp(120px, 28vh, 240px)', height: 'clamp(120px, 28vh, 240px)' }}>
+                   <div className="relative z-10" style={{ width: 'clamp(100px, 20vh, 200px)', height: 'clamp(100px, 20vh, 200px)' }}>
                      <WeatherIcon 
                        condition={data.current.condition} 
                        temp={data.current.temp}
@@ -255,7 +255,7 @@ export default function Home() {
                        transition={{ delay: 0.2 }}
                        className="relative z-10"
                      >
-                       <span data-testid="text-temperature" className="font-heading font-bold text-foreground tracking-tighter" style={{ fontSize: 'clamp(2.5rem, 8vh, 4.5rem)' }}>
+                       <span data-testid="text-temperature" className="font-heading font-bold text-foreground tracking-tighter leading-none" style={{ fontSize: 'clamp(2rem, 6vh, 3.5rem)' }}>
                          {Math.round(data.current.temp)}<span className="degree-symbol">°</span>
                        </span>
                      </motion.div>
@@ -265,8 +265,8 @@ export default function Home() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="font-heading font-medium text-muted-foreground relative z-10"
-                    style={{ fontSize: 'clamp(1.2rem, 3.5vh, 1.875rem)' }}
+                    className="font-heading font-medium text-muted-foreground relative z-10 leading-tight"
+                    style={{ fontSize: 'clamp(1rem, 2.5vh, 1.5rem)' }}
                    >
                      {data.current.description}
                    </motion.p>
