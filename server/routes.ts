@@ -120,7 +120,7 @@ export async function registerRoutes(
       }
 
       // Fetch 7-day forecast from Open-Meteo
-      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max&timezone=Australia/Sydney&forecast_days=7`;
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Australia/Sydney&forecast_days=7`;
       
       const response = await fetch(openMeteoUrl);
       
@@ -144,6 +144,7 @@ export async function registerRoutes(
           dayName: days[date.getDay()],
           condition: mapWmoCodeToCondition(daily.weather_code[i]),
           temp: Math.round(daily.temperature_2m_max[i]),
+          tempMin: Math.round(daily.temperature_2m_min[i]),
           description: getWeatherDescription(daily.weather_code[i])
         };
       });

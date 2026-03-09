@@ -15,7 +15,8 @@ export interface DailyForecast {
   date: string; // ISO date
   dayName: string; // "Monday", "Tuesday"
   condition: WeatherCondition;
-  temp: number; // Degrees Celsius
+  temp: number; // Max degrees Celsius
+  tempMin: number; // Min degrees Celsius
   description: string; // Text description for accessibility
 }
 

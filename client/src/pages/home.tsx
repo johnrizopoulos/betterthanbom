@@ -242,6 +242,9 @@ export default function Home() {
                       <span className="text-sm font-semibold text-foreground/80">
                         {day.temp}°
                       </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {day.tempMin}°
+                      </span>
                     </div>
                   </div>
                 ))}
