@@ -56,7 +56,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-2"
         >
-          <h1 className="text-3xl md:text-4xl font-bold"
+          <h1 className="md:text-4xl font-bold text-[#3737B3] bg-[transparent] text-[55px]"
             style={{
               color: '#001a4d',
               fontFamily: '"MS DOS", "Perfect DOS VGA 437", "Courier New", monospace',
@@ -312,7 +312,6 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
-
       {/* Icons Legend Modal */}
       <Dialog open={showLegend} onOpenChange={setShowLegend}>
         <DialogContent className="bg-white/95 backdrop-blur-xl border border-white/40">
