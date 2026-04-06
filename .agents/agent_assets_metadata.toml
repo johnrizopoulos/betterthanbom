@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "ppgIaQ-sWXvtiS3Fy_Weu"
+uri = "file://artifacts/mockup-sandbox/public/images/weather-glass-bg.png"
+type = "image"
+title = "Soft morning fog gradient background"
