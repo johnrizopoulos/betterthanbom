@@ -121,7 +121,7 @@ export function CoastalDoodle() {
             const colors = ['candy-pink', 'candy-green', 'candy-purple', 'candy-orange'];
             const colorClass = colors[index % colors.length];
             return (
-              <button key={fav} className={\`flex-shrink-0 doodle-card \${colorClass} px-6 py-3 text-[17px] font-bold text-[#2D3748] hover:bg-white\`}>
+              <button key={fav} className={`flex-shrink-0 doodle-card ${colorClass} px-6 py-3 text-[17px] font-bold text-[#2D3748] hover:bg-white`}>
                 {fav}
               </button>
             )
@@ -220,15 +220,15 @@ export function CoastalDoodle() {
                 const Icon = day.icon;
                 const isToday = i === 0;
                 return (
-                  <div key={day.day} className={\`flex items-center justify-between p-3 transition-all \${isToday ? 'doodle-card candy-yellow' : 'border-b-2 border-dashed border-[#CBD5E0] hover:bg-white hover:border-[#2D3748]'}\`}>
+                  <div key={day.day} className={`flex items-center justify-between p-3 transition-all ${isToday ? 'doodle-card candy-yellow' : 'border-b-2 border-dashed border-[#CBD5E0] hover:bg-white hover:border-[#2D3748]'}`}>
                     <div className="w-16 font-bold text-[#2D3748] text-[18px] bubbly-font">
                       {day.day}
                     </div>
                     <div className="flex-1 flex items-center gap-3">
-                      <div className={\`w-10 h-10 flex items-center justify-center transform \${i%2===0 ? 'rotate-6' : '-rotate-6'}\`}>
-                        <Icon className={\`w-6 h-6 \${isToday ? 'text-[#DD6B20]' : 'text-[#4A5568]'}\`} strokeWidth={2.5} />
+                      <div className={`w-10 h-10 flex items-center justify-center transform ${i%2===0 ? 'rotate-6' : '-rotate-6'}`}>
+                        <Icon className={`w-6 h-6 ${isToday ? 'text-[#DD6B20]' : 'text-[#4A5568]'}`} strokeWidth={2.5} />
                       </div>
-                      <span className={\`text-[17px] font-bold hidden sm:inline-block \${isToday ? 'text-[#2D3748]' : 'text-[#718096]'}\`}>
+                      <span className={`text-[17px] font-bold hidden sm:inline-block ${isToday ? 'text-[#2D3748]' : 'text-[#718096]'}`}>
                         {day.desc}
                       </span>
                     </div>
