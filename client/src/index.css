@@ -80,15 +80,16 @@
 @layer base {
   * {
     @apply border-border;
-    font-family: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive !important;
+    font-family: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
     color: black;
-  }
-  .degree-symbol {
-    font-family: Arial, sans-serif !important;
   }
   body {
     @apply antialiased bg-background min-h-screen;
   }
+}
+
+.degree-symbol {
+  font-family: Arial, sans-serif !important;
 }
 
 /* Utility for glassmorphism if needed */
