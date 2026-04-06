@@ -88,10 +88,6 @@
   }
 }
 
-.degree-symbol {
-  font-family: Arial, sans-serif !important;
-}
-
 /* Utility for glassmorphism if needed */
 .glass {
   @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/20;

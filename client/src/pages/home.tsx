@@ -256,7 +256,7 @@ export default function Home() {
                        className="relative z-10"
                      >
                        <span data-testid="text-temperature" className="font-heading font-bold text-foreground tracking-tighter leading-none" style={{ fontSize: 'clamp(2rem, 6vh, 3.5rem)' }}>
-                         {Math.round(data.current.temp)}<span className="degree-symbol">°</span>
+                         {Math.round(data.current.temp)}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
                        </span>
                      </motion.div>
                    )}
@@ -301,10 +301,10 @@ export default function Home() {
                         />
                       </div>
                       <span className="text-sm font-semibold text-foreground/80">
-                        {day.temp}<span className="degree-symbol">°</span>
+                        {day.temp}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
                       </span>
                       <span className="text-[10px] text-muted-foreground">
-                        {day.tempMin}<span className="degree-symbol">°</span>
+                        {day.tempMin}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
                       </span>
                     </div>
                   </div>
@@ -338,7 +338,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Jumper</h3>
-                <p className="text-sm text-muted-foreground">Cool weather (10–19°C) – wear a sweater or light jacket</p>
+                <p className="text-sm text-muted-foreground">Cool weather (10–19<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a sweater or light jacket</p>
               </div>
             </div>
 
@@ -348,7 +348,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">T-Shirt</h3>
-                <p className="text-sm text-muted-foreground">Warm weather (20–27°C) – light, short sleeves are perfect</p>
+                <p className="text-sm text-muted-foreground">Warm weather (20–27<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – light, short sleeves are perfect</p>
               </div>
             </div>
 
@@ -358,7 +358,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Hat</h3>
-                <p className="text-sm text-muted-foreground">Hot weather (&gt;28°C) – wear a hat and sunscreen</p>
+                <p className="text-sm text-muted-foreground">Hot weather (&gt;28<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a hat and sunscreen</p>
               </div>
             </div>
 
@@ -368,7 +368,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Coat</h3>
-                <p className="text-sm text-muted-foreground">Cold weather (&lt;10°C) – bundle up! Winter coat recommended</p>
+                <p className="text-sm text-muted-foreground">Cold weather (&lt;10<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – bundle up! Winter coat recommended</p>
               </div>
             </div>
           </div>

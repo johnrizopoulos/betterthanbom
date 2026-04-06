@@ -1,4 +1,4 @@
-const CACHE_NAME = 'better-than-bom-v1';
+const CACHE_NAME = 'better-than-bom-v2';
 const STATIC_ASSETS = [
   '/',
   '/icon-192.png',
