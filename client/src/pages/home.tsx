@@ -42,9 +42,10 @@ function getConditionIcon(condition: WeatherCondition) {
 function getOutfitLabel(condition: WeatherCondition, temp?: number): string {
   if (["rain", "storm", "hail", "drizzle"].includes(condition)) return "Umbrella weather";
   if (temp !== undefined) {
-    if (temp > 28) return "Hat & sunscreen";
-    if (temp >= 20) return "T-shirt weather";
-    if (temp >= 10) return "Jumper weather";
+    const rounded = Math.round(temp);
+    if (rounded > 28) return "Hat & sunscreen";
+    if (rounded >= 20) return "T-shirt weather";
+    if (rounded >= 10) return "Jumper weather";
     return "Rug up!";
   }
   return "T-shirt weather";

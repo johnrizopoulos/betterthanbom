@@ -48,35 +48,18 @@ export function WeatherIcon({ condition, temp, className, size = 24, animate = t
   } : {};
 
   const getIconType = (): IconType => {
-    // Rule 1: Raining -> Umbrella
     if (["rain", "storm", "hail", "drizzle"].includes(condition)) {
       return "umbrella";
     }
 
-    // Check temperature rules if provided
     if (temp !== undefined) {
-      // Rule 2: > 28c -> Sun hat
-      if (temp > 28) {
-        return "hat";
-      }
-      
-      // Rule 3: 20-27c -> T-shirt
-      if (temp >= 20 && temp <= 27) {
-        return "tshirt";
-      }
-
-      // Rule 4: 10-19c -> Jumper
-      if (temp >= 10 && temp <= 19) {
-        return "jumper";
-      }
-
-      // Rule 5: < 10c -> Stay inside (Coat)
-      if (temp < 10) {
-        return "coat";
-      }
+      const rounded = Math.round(temp);
+      if (rounded > 28) return "hat";
+      if (rounded >= 20) return "tshirt";
+      if (rounded >= 10) return "jumper";
+      return "coat";
     }
 
-    // Fallback based on condition
     switch (condition) {
       case "clear":
         return "hat";
