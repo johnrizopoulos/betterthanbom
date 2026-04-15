@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
-  --font-heading: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
+  --font-sans: 'Nunito', sans-serif;
+  --font-heading: 'Nunito', sans-serif;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -33,62 +33,56 @@
 }
 
 :root {
-  /* Soft Pop / Airy Theme */
-  --background: 210 40% 96%; /* Soft Cloud Blue/Grey */
-  --foreground: 0 0% 0%; /* Black */
+  --background: 30 18% 94%;
+  --foreground: 30 10% 27%;
 
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 0%;
+  --card-foreground: 30 10% 27%;
 
-  --primary: 221 83% 53%; /* Bright Blue */
-  --primary-foreground: 210 40% 98%;
+  --primary: 25 60% 40%;
+  --primary-foreground: 30 18% 94%;
 
-  --muted: 210 40% 90%;
-  --muted-foreground: 0 0% 0%;
+  --muted: 30 12% 88%;
+  --muted-foreground: 30 8% 55%;
 
-  --accent: 210 40% 96%;
-  --accent-foreground: 0 0% 0%;
+  --accent: 30 18% 94%;
+  --accent-foreground: 30 10% 27%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;
+  --border: 30 12% 88%;
+  --input: 30 12% 88%;
+  --ring: 25 60% 40%;
 
   --radius: 1rem;
-}
-
-.dark {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
-
-  --card: 217 33% 17%;
-  --card-foreground: 210 40% 98%;
-
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 11%;
-
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20% 65%;
-
-  --accent: 217 33% 17%;
-  --accent-foreground: 210 40% 98%;
-
-  --border: 217 33% 17%;
-  --input: 217 33% 17%;
-  --ring: 224 76% 48%;
 }
 
 @layer base {
   * {
     @apply border-border;
-    font-family: 'DrSeuss-ExtraBold', 'DrSeuss-Bold', 'DrSeuss-Light', 'Comic Sans MS', cursive;
-    color: black;
+    font-family: 'Nunito', sans-serif;
   }
   body {
     @apply antialiased bg-background min-h-screen;
   }
 }
 
-/* Utility for glassmorphism if needed */
+.bento-card {
+  border-radius: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.01);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .glass {
   @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/20;
 }

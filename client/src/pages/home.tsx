@@ -1,14 +1,54 @@
 import { useState, useEffect, useRef } from "react";
 import { useWeather, LocationResult } from "@/hooks/use-weather";
 import { useFavorites } from "@/hooks/use-favorites";
-import { WeatherBackground } from "@/components/weather-background";
 import { WeatherIcon } from "@/components/weather-icon";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Search, MapPin, Loader2, HelpCircle, Star, X } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Loader2,
+  HelpCircle,
+  Star,
+  X,
+  Cloud,
+  Sun,
+  CloudRain,
+  CloudSun,
+  CloudSnow,
+  CloudLightning,
+  CloudFog,
+  Wind,
+  Droplets,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import type { WeatherCondition } from "@/lib/weather-data";
+
+function getConditionIcon(condition: WeatherCondition) {
+  switch (condition) {
+    case "clear": return Sun;
+    case "partly-cloudy": return CloudSun;
+    case "cloudy": return Cloud;
+    case "rain": return CloudRain;
+    case "storm": return CloudLightning;
+    case "snow": return CloudSnow;
+    case "fog": return CloudFog;
+    case "wind": return Wind;
+    default: return Cloud;
+  }
+}
+
+function getOutfitLabel(condition: WeatherCondition, temp?: number): string {
+  if (["rain", "storm", "hail", "drizzle"].includes(condition)) return "Umbrella weather";
+  if (temp !== undefined) {
+    if (temp > 28) return "Hat & sunscreen";
+    if (temp >= 20) return "T-shirt weather";
+    if (temp >= 10) return "Jumper weather";
+    return "Rug up!";
+  }
+  return "T-shirt weather";
+}
 
 export default function Home() {
   const { data, isLoading, searchResults, isSearching, searchLocations, selectLocation, currentLocation } = useWeather();
@@ -27,7 +67,6 @@ export default function Home() {
         setShowDropdown(false);
       }
     }, 300);
-
     return () => clearTimeout(timer);
   }, [inputValue, searchLocations]);
 
@@ -47,347 +86,354 @@ export default function Home() {
     selectLocation(location);
   };
 
+  const locationName = data?.location?.split(",")[0] || "Melbourne";
+  const todayDate = format(new Date(), "d MMM");
+  const todayDay = format(new Date(), "EEEE");
+
   return (
-    <div className="h-dvh w-full flex flex-col items-center justify-center px-4 py-2 md:px-6 md:py-3 relative overflow-hidden">
-      <WeatherBackground condition={data?.current.condition} temp={data?.current.temp} />
-      <div className="w-full max-w-md flex flex-col items-center gap-1 relative z-10">
-        
-        {/* Header Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <h1 className="font-bold text-black whitespace-nowrap"
-            style={{
-              letterSpacing: '0.02em',
-              fontWeight: 900,
-              lineHeight: 1,
-              fontSize: 'clamp(28px, 8vw, 55px)',
-              fontStyle: 'italic',
-              textShadow: '2px 2px 0px #ff6b6b, -1px -1px 0px #4ecdc4',
-            }}
-          >
-            Better Than BoM
-          </h1>
-        </motion.div>
-        
-        {/* Search Bar with Help Button */}
-        <div className="flex items-center gap-2 w-full justify-center">
-          <motion.div 
-            ref={searchRef}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative flex-1 z-20"
-          >
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-            <Input 
-              data-testid="input-search"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Search any Australian suburb..." 
-              className="pl-10 pr-10 h-10 rounded-full bg-white/40 border-white/40 shadow-sm hover:bg-white/60 focus:bg-white/80 backdrop-blur-md transition-all duration-300 text-base placeholder:text-muted-foreground/70"
-            />
-            {isSearching && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
-            )}
-          </div>
-          
-          {/* Search Results Dropdown */}
-          <AnimatePresence>
-            {showDropdown && searchResults.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 overflow-hidden"
-              >
-                {searchResults.map((location) => (
-                  <button
-                    key={location.id}
-                    data-testid={`button-location-${location.id}`}
-                    onClick={() => handleSelectLocation(location)}
-                    className="w-full px-4 py-3 text-left hover:bg-white/60 transition-colors flex items-center gap-3 border-b border-white/20 last:border-b-0"
-                  >
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-foreground">{location.name}</p>
-                      <p className="text-sm text-muted-foreground">{location.state}</p>
-                    </div>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-            {showDropdown && inputValue.length >= 2 && !isSearching && searchResults.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-white/40 p-4 text-center text-muted-foreground"
-              >
-                No locations found
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+    <div className="min-h-dvh bg-[#F4F1ED] text-[#4A443E] p-4 sm:p-6 md:p-8 flex justify-center items-start overflow-y-auto">
+      <div className="w-full max-w-[420px] space-y-4">
 
-          {/* Help Button */}
-          <button
-            data-testid="button-icons-legend"
-            onClick={() => setShowLegend(true)}
-            className="p-2 rounded-full hover:bg-white/20 transition-colors text-muted-foreground hover:text-foreground flex-shrink-0"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Favorites Bar */}
-        {favorites.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap justify-center w-full">
-            {favorites.map((fav) => (
-              <div
-                key={fav.id}
-                className={cn(
-                  "group flex items-center gap-1 rounded-full text-xs font-medium transition-all duration-200 border",
-                  currentLocation?.id === fav.id
-                    ? "bg-foreground/10 border-foreground/20 text-foreground"
-                    : "bg-white/30 border-white/40 text-muted-foreground hover:bg-white/50"
-                )}
-              >
-                <button
-                  data-testid={`button-favorite-${fav.id}`}
-                  onClick={() => selectLocation(fav)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-full"
-                >
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                  <span>{fav.name}</span>
-                </button>
-                <button
-                  data-testid={`button-remove-favorite-${fav.id}`}
-                  onClick={() => removeFavorite(fav.id)}
-                  className="pr-2 opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex flex-col items-center relative w-full gap-0">
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <motion.div 
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center gap-4"
-              >
-                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                <p className="text-muted-foreground animate-pulse font-medium">Loading weather...</p>
-              </motion.div>
-            ) : data ? (
-              <motion.div
-                key="weather"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex flex-col items-center text-center w-full gap-0"
-              >
-                {/* Location Info */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="mb-0 space-y-0"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <h1 data-testid="text-location" className="text-foreground tracking-tight font-bold" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>
-                      {data.location.split(',')[0]}
-                    </h1>
-                    {currentLocation && (
-                      <button
-                        data-testid="button-toggle-favorite"
-                        onClick={() => {
-                          if (isFavorite(currentLocation.id)) {
-                            removeFavorite(currentLocation.id);
-                          } else {
-                            addFavorite(currentLocation);
-                          }
-                        }}
-                        className="p-1.5 rounded-full hover:bg-white/30 transition-colors"
-                      >
-                        <Star
-                          className={cn(
-                            "h-5 w-5 transition-colors",
-                            isFavorite(currentLocation.id)
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-muted-foreground hover:text-amber-400"
-                          )}
-                        />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-muted-foreground font-medium" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)' }}>
-                    {format(new Date(), "EEEE, d MMMM")}
-                  </p>
-                </motion.div>
-
-                {/* Main Icon - The Hero */}
-                <div className="relative flex flex-col items-center gap-0" style={{ marginBottom: 0 }}>
-                   
-                   <div className="relative z-10" style={{ width: 'clamp(100px, 20vh, 200px)', height: 'clamp(100px, 20vh, 200px)' }}>
-                     <WeatherIcon 
-                       condition={data.current.condition} 
-                       temp={data.current.temp}
-                       size="auto"
-                       className="drop-shadow-2xl filter w-full h-full"
-                     />
-                   </div>
-                   
-                   {data.current.temp !== undefined && (
-                     <motion.div 
-                       initial={{ opacity: 0, y: 10 }}
-                       animate={{ opacity: 1, y: 0 }}
-                       transition={{ delay: 0.2 }}
-                       className="relative z-10"
-                     >
-                       <span data-testid="text-temperature" className="font-heading font-bold text-foreground tracking-tighter leading-none" style={{ fontSize: 'clamp(2rem, 6vh, 3.5rem)' }}>
-                         {Math.round(data.current.temp)}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
-                       </span>
-                     </motion.div>
-                   )}
-
-                   <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="font-heading font-medium text-muted-foreground relative z-10 leading-tight"
-                    style={{ fontSize: 'clamp(1rem, 2.5vh, 1.5rem)' }}
-                   >
-                     {data.current.description}
-                   </motion.p>
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
-
-        {/* Forecast Row */}
-        <AnimatePresence>
-          {!isLoading && data && data.forecast && data.forecast.length > 0 && (
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="w-full bg-white/30 backdrop-blur-xl rounded-3xl p-2 shadow-lg border border-white/40 flex-shrink-0"
+        <div className="flex flex-col gap-4 mb-2">
+          <div className="flex justify-between items-center px-1">
+            <h1 data-testid="text-app-title" className="text-xl font-black text-[#8A7D71] tracking-tight">
+              Better Than BoM <span className="text-[#D08B5B]">.</span>
+            </h1>
+            <button
+              data-testid="button-icons-legend"
+              onClick={() => setShowLegend(true)}
+              className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="grid grid-cols-7 gap-1">
-                {data.forecast.map((day, i) => (
-                  <div key={day.date} className="flex flex-col items-center gap-0.5 group cursor-default">
-                    <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      {day.dayName.slice(0, 3)}
-                    </span>
-                    <div className="flex flex-col items-center gap-0 flex-1 justify-center">
-                      <div className="p-1 rounded-xl group-hover:bg-white/40 group-hover:scale-110 transition-all duration-300 h-[36px] flex items-center justify-center">
-                        <WeatherIcon 
-                          condition={day.condition} 
-                          temp={day.temp}
-                          size={28} 
-                          animate={false} 
-                        />
+              <HelpCircle className="w-5 h-5 text-[#8A7D71]" />
+            </button>
+          </div>
+
+          <div ref={searchRef} className="relative flex items-center gap-3">
+            <div className="flex-1 bg-white bento-card flex items-center px-5 py-4 h-14 rounded-[28px]">
+              <Search className="w-5 h-5 text-[#BBAFA0] mr-3 flex-shrink-0" />
+              <input
+                data-testid="input-search"
+                type="text"
+                placeholder="Search suburb..."
+                className="bg-transparent border-none outline-none w-full text-[16px] font-bold text-[#4A443E] placeholder:text-[#C5BDB2]"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+              />
+              {isSearching && (
+                <Loader2 className="w-4 h-4 text-[#BBAFA0] animate-spin flex-shrink-0" />
+              )}
+            </div>
+
+            <AnimatePresence>
+              {showDropdown && searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-lg border border-[#E8E2D9] overflow-hidden z-30"
+                >
+                  {searchResults.map((location) => (
+                    <button
+                      key={location.id}
+                      data-testid={`button-location-${location.id}`}
+                      onClick={() => handleSelectLocation(location)}
+                      className="w-full px-4 py-3 text-left hover:bg-[#F9F8F6] transition-colors flex items-center gap-3 border-b border-[#F4F1ED] last:border-b-0"
+                    >
+                      <MapPin className="h-4 w-4 text-[#BBAFA0] flex-shrink-0" />
+                      <div>
+                        <p className="font-bold text-[#4A443E]">{location.name}</p>
+                        <p className="text-sm text-[#A0AABF]">{location.state}</p>
                       </div>
-                      <span className="text-sm font-semibold text-foreground/80">
-                        {day.temp}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {day.tempMin}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
-                      </span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+              {showDropdown && inputValue.length >= 2 && !isSearching && searchResults.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-lg border border-[#E8E2D9] p-4 text-center text-[#A0AABF] z-30"
+                >
+                  No locations found
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <button
+            data-testid="button-saved-label"
+            className="flex-shrink-0 bg-[#E8E2D9] text-[#7A7165] font-bold px-5 py-3 rounded-2xl flex items-center gap-2 text-sm"
+          >
+            <Star className="w-4 h-4 fill-current" />
+            Saved
+          </button>
+          {favorites.map((fav) => (
+            <div
+              key={fav.id}
+              className={cn(
+                "flex-shrink-0 flex items-center group",
+                currentLocation?.id === fav.id
+                  ? "bg-[#D08B5B] text-white"
+                  : "bg-white text-[#6A6158]"
+              )}
+              style={{ borderRadius: 16 }}
+            >
+              <button
+                data-testid={`button-favorite-${fav.id}`}
+                onClick={() => selectLocation(fav)}
+                className="bento-card rounded-2xl px-5 py-3 text-sm font-bold"
+              >
+                {fav.name}
+              </button>
+              <button
+                data-testid={`button-remove-favorite-${fav.id}`}
+                onClick={() => removeFavorite(fav.id)}
+                className="pr-3 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {isLoading ? (
+            <div className="flex flex-col items-center gap-4 py-20">
+              <div className="w-12 h-12 border-4 border-[#D08B5B]/20 border-t-[#D08B5B] rounded-full animate-spin" />
+              <p className="text-[#8A7D71] animate-pulse font-bold">Loading weather...</p>
+            </div>
+          ) : data ? (
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="col-span-2 bento-card p-6 relative overflow-hidden group" style={{ background: "linear-gradient(135deg, #FEE9D7 0%, #F8D8C2 100%)" }}>
+                <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/30 rounded-full blur-2xl transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-[#FFC59E]/40 rounded-full blur-2xl transition-transform duration-700 group-hover:scale-110" />
+                <div className="relative z-10 flex justify-between items-start">
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-1.5 opacity-80">
+                      <MapPin className="w-4 h-4 text-[#A85B28]" />
+                      <span className="text-sm font-bold text-[#A85B28] uppercase tracking-wider">Current Location</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <h2 data-testid="text-location" className="text-4xl font-black tracking-tighter text-[#5C341A]">
+                        {locationName}
+                      </h2>
+                      {currentLocation && (
+                        <button
+                          data-testid="button-toggle-favorite"
+                          onClick={() => {
+                            if (isFavorite(currentLocation.id)) {
+                              removeFavorite(currentLocation.id);
+                            } else {
+                              addFavorite(currentLocation);
+                            }
+                          }}
+                          className="p-1.5 rounded-full hover:bg-white/40 transition-colors"
+                        >
+                          <Star
+                            className={cn(
+                              "h-5 w-5 transition-colors",
+                              isFavorite(currentLocation.id)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-[#A85B28]/50 hover:text-amber-400"
+                            )}
+                          />
+                        </button>
+                      )}
                     </div>
                   </div>
-                ))}
+                  <div className="text-right flex flex-col items-end">
+                    <div className="text-lg font-black bg-white/60 px-4 py-1.5 rounded-2xl inline-block text-[#A85B28] backdrop-blur-sm">
+                      {todayDate}
+                    </div>
+                    <div className="text-sm font-bold text-[#B06A3B] mt-2 mr-1">{todayDay}</div>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+              <div className="bg-[#E4F1EE] bento-card p-6 flex flex-col justify-between aspect-square relative overflow-hidden group">
+                <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/40 rounded-full blur-xl group-hover:scale-110 transition-transform" />
+                <div className="relative z-10 flex items-center justify-between">
+                  {(() => {
+                    const CondIcon = getConditionIcon(data.current.condition as WeatherCondition);
+                    return <CondIcon className="w-10 h-10 text-[#52877B] fill-[#52877B]/20" />;
+                  })()}
+                  <div className="text-[11px] font-bold text-[#52877B] uppercase tracking-wider bg-white/40 px-3 py-1 rounded-xl">
+                    {data.current.description}
+                  </div>
+                </div>
+                <div className="relative z-10 mt-4">
+                  <div data-testid="text-temperature" className="text-6xl font-black text-[#264A42] tracking-tighter -ml-1">
+                    {Math.round(data.current.temp)}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
+                  </div>
+                  <div className="text-sm font-bold text-[#52877B] mt-1">
+                    {data.current.description}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#F8E1E7] bento-card p-6 flex flex-col justify-between aspect-square relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 w-32 h-32 bg-white/40 rounded-full translate-x-1/3 translate-y-1/3 blur-xl group-hover:scale-110 transition-transform" />
+                <div className="relative z-10 flex justify-between items-center">
+                  <div className="text-[11px] font-bold text-[#C97B8F] uppercase tracking-wider bg-white/50 px-3 py-1 rounded-xl backdrop-blur-sm">
+                    Wear this
+                  </div>
+                </div>
+                <div className="flex-1 flex items-center justify-center relative z-10 my-2">
+                  <div className="transform -rotate-12 group-hover:rotate-0 transition-transform duration-500 ease-out cursor-default drop-shadow-lg" style={{ width: 100, height: 100 }}>
+                    <WeatherIcon
+                      condition={data.current.condition}
+                      temp={data.current.temp}
+                      size="auto"
+                      animate={false}
+                    />
+                  </div>
+                </div>
+                <div className="relative z-10 text-sm font-black text-[#B05B72] text-center">
+                  {getOutfitLabel(data.current.condition as WeatherCondition, data.current.temp)}
+                </div>
+              </div>
+
+              <div className="col-span-2 grid grid-cols-2 gap-4">
+                <div className="bg-white bento-card p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0F4FF] flex items-center justify-center text-[#6B8AF0] flex-shrink-0">
+                    <Wind className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#A0AABF] uppercase tracking-wider">Wind</div>
+                    <div className="text-xl font-black text-[#4A443E]">
+                      {data.current.windSpeed ?? "—"} <span className="text-sm text-[#A0AABF] font-bold">km/h</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white bento-card p-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F0F8FF] flex items-center justify-center text-[#6BB0F0] flex-shrink-0">
+                    <Droplets className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#A0AABF] uppercase tracking-wider">Humidity</div>
+                    <div className="text-xl font-black text-[#4A443E]">
+                      {data.current.humidity ?? "—"}<span className="text-sm text-[#A0AABF] font-bold">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-span-2 bg-white bento-card p-6">
+                <div className="flex justify-between items-center mb-6 px-1">
+                  <h2 className="text-sm font-black text-[#A0AABF] uppercase tracking-widest">7-Day Forecast</h2>
+                </div>
+                <div className="space-y-1">
+                  {data.forecast.map((day, i) => {
+                    const Icon = getConditionIcon(day.condition as WeatherCondition);
+                    const isToday = i === 0;
+                    return (
+                      <div
+                        key={day.date}
+                        data-testid={`row-forecast-${i}`}
+                        className={cn(
+                          "flex items-center justify-between p-3 rounded-2xl transition-colors",
+                          isToday ? "bg-[#F4F1ED]" : "hover:bg-[#F9F8F6]"
+                        )}
+                      >
+                        <div className="w-16 font-extrabold text-[#4A443E] text-[15px]">
+                          {isToday ? "Today" : day.dayName.slice(0, 3)}
+                        </div>
+                        <div className="flex-1 flex items-center gap-3">
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", isToday && "bg-white shadow-sm")}>
+                            <Icon className={cn("w-5 h-5", isToday ? "text-[#52877B]" : "text-[#A0AABF]")} />
+                          </div>
+                          <span className="text-sm font-bold text-[#A0AABF] hidden sm:inline-block">
+                            {day.description}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 w-24 justify-end">
+                          <span className="font-black text-[15px] text-[#4A443E]">
+                            {day.temp}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
+                          </span>
+                          <span className="font-bold text-[15px] text-[#C5BDB2]">
+                            {day.tempMin}<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ) : null}
       </div>
-      {/* Icons Legend Modal */}
+
       <Dialog open={showLegend} onOpenChange={setShowLegend}>
-        <DialogContent className="bg-white/95 backdrop-blur-xl border border-white/40 max-h-[85vh] mx-4 flex flex-col">
+        <DialogContent className="bg-white/95 backdrop-blur-xl border border-[#E8E2D9] max-h-[85vh] mx-4 flex flex-col rounded-3xl">
           <DialogHeader className="flex-shrink-0">
-            <DialogTitle className="text-2xl font-bold">What Do These Icons Mean?</DialogTitle>
+            <DialogTitle className="text-2xl font-black text-[#4A443E]">What Do These Icons Mean?</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 min-h-0">
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
-              <div className="p-3 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <WeatherIcon condition="rain" temp={15} size={44} animate={false} />
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+                <div className="p-3 rounded-2xl bg-[#E4F1EE] flex items-center justify-center min-w-[60px] h-[60px]">
+                  <WeatherIcon condition="rain" temp={15} size={44} animate={false} />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#4A443E]">Umbrella</h3>
+                  <p className="text-sm text-[#8A7D71]">Rainy or stormy weather – bring an umbrella!</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-foreground">Umbrella</h3>
-                <p className="text-sm text-muted-foreground">Rainy or stormy weather – bring an umbrella!</p>
+              <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+                <div className="p-3 rounded-2xl bg-[#F8E1E7] flex items-center justify-center min-w-[60px] h-[60px]">
+                  <WeatherIcon condition="partly-cloudy" temp={15} size={44} animate={false} />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#4A443E]">Jumper</h3>
+                  <p className="text-sm text-[#8A7D71]">Cool weather (10–19<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a sweater or light jacket</p>
+                </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
-              <div className="p-3 rounded-lg bg-gradient-to-br from-pink-50 to-pink-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <WeatherIcon condition="partly-cloudy" temp={15} size={44} animate={false} />
+              <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+                <div className="p-3 rounded-2xl bg-[#E4F1EE] flex items-center justify-center min-w-[60px] h-[60px]">
+                  <WeatherIcon condition="clear" temp={23} size={44} animate={false} />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#4A443E]">T-Shirt</h3>
+                  <p className="text-sm text-[#8A7D71]">Warm weather (20–27<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – light, short sleeves are perfect</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-foreground">Jumper</h3>
-                <p className="text-sm text-muted-foreground">Cool weather (10–19<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a sweater or light jacket</p>
+              <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+                <div className="p-3 rounded-2xl bg-[#FEE9D7] flex items-center justify-center min-w-[60px] h-[60px]">
+                  <WeatherIcon condition="clear" temp={30} size={44} animate={false} />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#4A443E]">Hat</h3>
+                  <p className="text-sm text-[#8A7D71]">Hot weather (&gt;28<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a hat and sunscreen</p>
+                </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
-              <div className="p-3 rounded-lg bg-gradient-to-br from-cyan-50 to-cyan-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <WeatherIcon condition="clear" temp={23} size={44} animate={false} />
-              </div>
-              <div>
-                <h3 className="font-bold text-foreground">T-Shirt</h3>
-                <p className="text-sm text-muted-foreground">Warm weather (20–27<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – light, short sleeves are perfect</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
-              <div className="p-3 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <WeatherIcon condition="clear" temp={30} size={44} animate={false} />
-              </div>
-              <div>
-                <h3 className="font-bold text-foreground">Hat</h3>
-                <p className="text-sm text-muted-foreground">Hot weather (&gt;28<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – wear a hat and sunscreen</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
-              <div className="p-3 rounded-lg bg-gradient-to-br from-stone-50 to-stone-100 flex items-center justify-center min-w-[60px] h-[60px]">
-                <WeatherIcon condition="snow" temp={5} size={44} animate={false} />
-              </div>
-              <div>
-                <h3 className="font-bold text-foreground">Coat</h3>
-                <p className="text-sm text-muted-foreground">Cold weather (&lt;10<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – bundle up! Winter coat recommended</p>
+              <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+                <div className="p-3 rounded-2xl bg-[#E8E2D9] flex items-center justify-center min-w-[60px] h-[60px]">
+                  <WeatherIcon condition="snow" temp={5} size={44} animate={false} />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#4A443E]">Coat</h3>
+                  <p className="text-sm text-[#8A7D71]">Cold weather (&lt;10<span style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>°</span>C) – bundle up! Winter coat recommended</p>
+                </div>
               </div>
             </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2 pt-3 border-t border-border/40">
-            Weather data sourced from Open-Meteo. This app is not affiliated with or sourced from the Bureau of Meteorology (bom.gov.au). Temperatures and conditions may vary slightly from BoM forecasts.
-          </p>
-          <div className="mt-3 pt-3 border-t border-border/40">
-            <h3 className="font-bold text-sm text-foreground mb-2">Install on Your Phone</h3>
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <div>
-                <p className="font-semibold text-foreground/80">Android (Chrome):</p>
-                <p>Tap the menu (three dots) at the top right, then tap "Add to Home Screen" or "Install App".</p>
-              </div>
-              <div>
-                <p className="font-semibold text-foreground/80">iPhone (Safari):</p>
-                <p>Tap the Share button (square with arrow) at the bottom, scroll down and tap "Add to Home Screen".</p>
+            <p className="text-xs text-[#A0AABF] mt-2 pt-3 border-t border-[#E8E2D9]">
+              Weather data sourced from Open-Meteo. This app is not affiliated with or sourced from the Bureau of Meteorology (bom.gov.au). Temperatures and conditions may vary slightly from BoM forecasts.
+            </p>
+            <div className="mt-3 pt-3 border-t border-[#E8E2D9]">
+              <h3 className="font-black text-sm text-[#4A443E] mb-2">Install on Your Phone</h3>
+              <div className="space-y-2 text-xs text-[#8A7D71]">
+                <div>
+                  <p className="font-bold text-[#6A6158]">Android (Chrome):</p>
+                  <p>Tap the menu (three dots) at the top right, then tap "Add to Home Screen" or "Install App".</p>
+                </div>
+                <div>
+                  <p className="font-bold text-[#6A6158]">iPhone (Safari):</p>
+                  <p>Tap the Share button (square with arrow) at the bottom, scroll down and tap "Add to Home Screen".</p>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </DialogContent>
       </Dialog>

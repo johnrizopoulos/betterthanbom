@@ -28,6 +28,8 @@ export interface WeatherData {
     temp: number; // Degrees Celsius
     isDay: boolean;
     description: string;
+    windSpeed?: number; // km/h
+    humidity?: number; // percentage
   };
   forecast: DailyForecast[];
 }

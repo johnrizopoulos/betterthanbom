@@ -1,8 +1,8 @@
 # Better than BoM - Weather Application
 
-## Version 1.3
+## Version 2.0
 
-**Release Date:** March 9, 2026
+**Release Date:** April 15, 2026
 
 ## Overview
 
@@ -14,18 +14,19 @@ Better than BoM is an Australian weather application that provides current weath
 - Pixel-art outfit icons based on temperature and weather conditions
 - 7-day forecast with daily min/max temperatures and outfit recommendations
 - Favorite locations saved in browser for quick access
-- Dynamic animated backgrounds matching weather conditions (gradients + particle effects)
-- Retro 90s computer-style header
+- Soft Bento grid layout with warm earth-tone palette
+- Wind speed and humidity display
 - Data source disclaimer (not affiliated with BoM)
 
 ## User Preferences
 
 - Preferred communication style: Simple, everyday language
-- Design preference: Pixel art aesthetic, Dr Seuss whimsical style
-- Font: DrSeuss-ExtraBold (CDN), applied globally to all text, black only
-- Header style: Italic, dual-color text shadow (coral red + teal), Dr Seuss font
-- Background: Dynamic gradients and particle effects matching weather
-- Layout: Tight vertical spacing, no flex-grow gaps — content flows naturally without large empty spaces between components
+- Design preference: Soft Bento grid, warm earthy tones
+- Font: Nunito (Google Fonts), applied globally, bold weights
+- Header style: "Better Than BoM ." with warm brown (#8A7D71) and terracotta dot (#D08B5B)
+- Background: Solid warm off-white (#F4F1ED)
+- Layout: 2-column bento grid, 420px max width, rounded 32px cards with subtle shadows and hover lift
+- Colour palette: Peach gradient (#FEE9D7→#F8D8C2), sage green (#E4F1EE), dusty pink (#F8E1E7), warm whites
 
 ## Outfit Icon Logic
 
@@ -78,7 +79,7 @@ The app displays different pixel-art icons based on weather conditions:
 - `GET /api/weather/search?q={query}` - Search Australian suburbs
   - Returns: `{ results: [{ id, name, state, latitude, longitude, displayName }] }`
 - `GET /api/weather/current?lat={lat}&lon={lon}&name={name}` - Current weather
-  - Returns: `{ location, current: { temp, condition, isDay, description } }`
+  - Returns: `{ location, current: { temp, condition, isDay, description, windSpeed, humidity } }`
 - `GET /api/weather/forecast?lat={lat}&lon={lon}` - 7-day forecast
   - Returns: `{ forecast: [{ date, dayName, condition, temp, tempMin, description }] }`
 
@@ -91,7 +92,7 @@ The app displays different pixel-art icons based on weather conditions:
 - Geocoding: `https://geocoding-api.open-meteo.com/v1/search`
   - Filters results to `country_code === 'AU'` for Australian locations
 - Weather: `https://api.open-meteo.com/v1/forecast`
-  - Current conditions: temperature_2m, weather_code, is_day
+  - Current conditions: temperature_2m, weather_code, is_day, wind_speed_10m, relative_humidity_2m
   - Daily forecast: weather_code, temperature_2m_max, temperature_2m_min
 
 ### File Structure
@@ -119,6 +120,12 @@ The app displays different pixel-art icons based on weather conditions:
 ```
 
 ## Recent Changes
+
+### V2.0 (April 15, 2026)
+1. **Soft Bento Redesign** - Complete UI overhaul to Soft Bento grid layout with warm earth-tone palette, Nunito font, and rounded 32px cards
+2. **Wind & Humidity** - Added wind speed (km/h) and humidity (%) to current weather display via Open-Meteo API
+3. **Lucide Weather Icons** - Forecast now uses Lucide icons for weather conditions; pixel-art sprites remain for outfit recommendation
+4. **Removed Animated Background** - Replaced dynamic weather background with clean solid off-white (#F4F1ED)
 
 ### V1.3 (March 9, 2026)
 1. **Progressive Web App (PWA)** - Installable on Android and iOS via "Add to Home Screen", offline caching, standalone mode

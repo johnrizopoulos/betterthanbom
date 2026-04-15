@@ -68,7 +68,7 @@ export async function registerRoutes(
       }
 
       // Fetch current weather from Open-Meteo
-      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day&timezone=Australia/Sydney`;
+      const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day,wind_speed_10m,relative_humidity_2m&timezone=Australia/Sydney`;
       
       const response = await fetch(openMeteoUrl);
       
@@ -92,7 +92,9 @@ export async function registerRoutes(
           temp: Math.round(current.temperature_2m * 10) / 10,
           condition: mapWmoCodeToCondition(current.weather_code),
           isDay: current.is_day === 1,
-          description: getWeatherDescription(current.weather_code)
+          description: getWeatherDescription(current.weather_code),
+          windSpeed: current.wind_speed_10m !== undefined ? Math.round(current.wind_speed_10m) : undefined,
+          humidity: current.relative_humidity_2m !== undefined ? Math.round(current.relative_humidity_2m) : undefined,
         }
       };
 
