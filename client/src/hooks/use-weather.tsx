@@ -12,6 +12,28 @@ export interface LocationResult {
   displayName: string;
 }
 
+const LAST_LOCATION_KEY = "btb-last-location";
+
+function getLastLocation(): LocationResult | null {
+  try {
+    const stored = localStorage.getItem(LAST_LOCATION_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (typeof parsed.id === "number" && typeof parsed.name === "string" &&
+          typeof parsed.latitude === "number" && typeof parsed.longitude === "number") {
+        return parsed;
+      }
+    }
+  } catch {}
+  return null;
+}
+
+function saveLastLocation(location: LocationResult) {
+  try {
+    localStorage.setItem(LAST_LOCATION_KEY, JSON.stringify(location));
+  } catch {}
+}
+
 export function useWeather() {
   const [data, setData] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +42,9 @@ export function useWeather() {
   const [currentLocation, setCurrentLocation] = useState<LocationResult | null>(null);
   const { toast } = useToast();
 
-  // Initial load - fetch Melbourne by default
   useEffect(() => {
-    const defaultLocation: LocationResult = {
+    const last = getLastLocation();
+    const location: LocationResult = last ?? {
       id: 2158177,
       name: "Melbourne",
       state: "Victoria",
@@ -31,8 +53,8 @@ export function useWeather() {
       longitude: 144.9631,
       displayName: "Melbourne, VIC",
     };
-    setCurrentLocation(defaultLocation);
-    fetchWeatherByCoords(-37.8136, 144.9631, "Melbourne, VIC");
+    setCurrentLocation(location);
+    fetchWeatherByCoords(location.latitude, location.longitude, location.displayName);
   }, []);
 
   const fetchWeatherByCoords = async (lat: number, lon: number, name: string) => {
@@ -103,6 +125,7 @@ export function useWeather() {
   const selectLocation = async (location: LocationResult) => {
     setCurrentLocation(location);
     setSearchResults([]);
+    saveLastLocation(location);
     await fetchWeatherByCoords(location.latitude, location.longitude, location.displayName);
   };
 
