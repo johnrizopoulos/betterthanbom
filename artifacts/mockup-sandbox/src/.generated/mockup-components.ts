@@ -9,5 +9,8 @@ export const modules: ModuleMap = {
   "./components/mockups/weather-redesign/CoastalDoodle.tsx": () => import("../components/mockups/weather-redesign/CoastalDoodle.tsx"),
   "./components/mockups/weather-redesign/CoastalJelly.tsx": () => import("../components/mockups/weather-redesign/CoastalJelly.tsx"),
   "./components/mockups/weather-redesign/GlassMinimal.tsx": () => import("../components/mockups/weather-redesign/GlassMinimal.tsx"),
+  "./components/mockups/weather-redesign/SeussClassic.tsx": () => import("../components/mockups/weather-redesign/SeussClassic.tsx"),
+  "./components/mockups/weather-redesign/SeussHatCat.tsx": () => import("../components/mockups/weather-redesign/SeussHatCat.tsx"),
+  "./components/mockups/weather-redesign/SeussLorax.tsx": () => import("../components/mockups/weather-redesign/SeussLorax.tsx"),
   "./components/mockups/weather-redesign/SoftBento.tsx": () => import("../components/mockups/weather-redesign/SoftBento.tsx")
 };

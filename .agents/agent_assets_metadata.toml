@@ -6,3 +6,27 @@ id = "ppgIaQ-sWXvtiS3Fy_Weu"
 uri = "file://artifacts/mockup-sandbox/public/images/weather-glass-bg.png"
 type = "image"
 title = "Soft morning fog gradient background"
+
+[[generated]]
+id = "j3mtcSxygl7sGdZ2xEaE-"
+uri = "file://artifacts/mockup-sandbox/public/images/seuss-bg.png"
+type = "image"
+title = "Seuss whimsical landscape background"
+
+[[generated]]
+id = "6IWYWr3Yd4mFJqCmwhM7Y"
+uri = "file://artifacts/mockup-sandbox/public/images/seuss-hat.png"
+type = "image"
+title = "Seuss red and white striped hat"
+
+[[generated]]
+id = "dcg6_QS9oihY49j8NcA3-"
+uri = "file://artifacts/mockup-sandbox/public/images/truffula-bg.png"
+type = "image"
+title = "Truffula tree forest sunset background"
+
+[[generated]]
+id = "Ykzhp3Ym2Et7PWF4_uDbk"
+uri = "file://artifacts/mockup-sandbox/public/images/lorax-creature.png"
+type = "image"
+title = "Cute orange furry creature mustache"
