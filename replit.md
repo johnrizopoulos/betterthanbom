@@ -14,6 +14,7 @@ Better than BoM is an Australian weather application that provides current weath
 - Pixel-art outfit icons based on temperature and weather conditions
 - 7-day forecast with daily min/max temperatures and outfit recommendations
 - Favorite locations saved in browser for quick access
+- Remembers last viewed location across page reloads
 - Soft Bento grid layout with warm earth-tone palette
 - Wind speed and humidity display
 - Data source disclaimer (not affiliated with BoM)
@@ -30,11 +31,11 @@ Better than BoM is an Australian weather application that provides current weath
 
 ## Outfit Icon Logic
 
-The app displays different pixel-art icons based on weather conditions:
+The app displays different pixel-art icons based on weather conditions. Temperature is rounded before comparison so the icon matches the displayed value.
 
 | Icon | Condition |
 |------|-----------|
-| Umbrella (rainbow) | Rain or storm |
+| Umbrella (rainbow) | Rain or storm (takes priority over temperature) |
 | Jumper (pink sweater) | Cool weather (10-19°C) |
 | T-shirt (cyan with smiley) | Warm weather (20-27°C) |
 | Hat (beige sun hat) | Hot weather (>28°C) |
@@ -53,18 +54,19 @@ The app displays different pixel-art icons based on weather conditions:
 - shadcn/ui component library with Radix UI primitives
 - Tailwind CSS v4 for styling
 - Framer Motion for animations
-- Custom pixel-art weather icons (sprite sheet: `attached_assets/image_1764585934042.png`)
+- Lucide Icons for forecast weather condition icons
+- Custom pixel-art weather icons for outfit recommendations (sprite sheet: `attached_assets/image_1764585934042.png`)
 
 **Key Components:**
-- `client/src/pages/home.tsx` - Main weather display page
-- `client/src/components/weather-background.tsx` - Dynamic animated background
-- `client/src/components/weather-icon.tsx` - Pixel art icon renderer
-- `client/src/hooks/use-weather.tsx` - Weather data fetching hook
+- `client/src/pages/home.tsx` - Main weather display page (Soft Bento grid layout)
+- `client/src/components/weather-icon.tsx` - Pixel art icon renderer (sprite sheet based)
+- `client/src/hooks/use-weather.tsx` - Weather data fetching hook + last-location persistence
 - `client/src/hooks/use-favorites.tsx` - Favorites management hook (localStorage)
 
 **State Management:**
 - Custom React hooks for weather data and location search
 - Favorites persisted in browser localStorage (`btb-favorite-locations` key)
+- Last viewed location persisted in browser localStorage (`btb-last-location` key)
 - Debounced search input with dropdown suggestions
 - Local state using useState, useEffect, useCallback
 
@@ -104,12 +106,12 @@ The app displays different pixel-art icons based on weather conditions:
 │   │   │   ├── weather-icon.tsx    # Pixel art icon component
 │   │   │   └── ui/                 # shadcn/ui components
 │   │   ├── hooks/
-│   │   │   ├── use-weather.tsx     # Weather data hook
+│   │   │   ├── use-weather.tsx     # Weather data hook + last-location persistence
 │   │   │   └── use-favorites.tsx   # Favorites localStorage hook
 │   │   ├── lib/
 │   │   │   └── weather-data.ts     # Weather types and conditions
 │   │   └── pages/
-│   │       └── home.tsx            # Main page
+│   │       └── home.tsx            # Main page (Soft Bento layout)
 │   └── index.html                  # HTML template with meta tags
 ├── server/
 │   ├── routes.ts                   # API endpoints
@@ -126,6 +128,8 @@ The app displays different pixel-art icons based on weather conditions:
 2. **Wind & Humidity** - Added wind speed (km/h) and humidity (%) to current weather display via Open-Meteo API
 3. **Lucide Weather Icons** - Forecast now uses Lucide icons for weather conditions; pixel-art sprites remain for outfit recommendation
 4. **Removed Animated Background** - Replaced dynamic weather background with clean solid off-white (#F4F1ED)
+5. **Last Viewed Location** - App remembers and restores the most recently viewed location on page load (falls back to Melbourne for first-time visitors)
+6. **Icon Logic Fix** - Temperature is now rounded before range comparison, and cascading ranges eliminate gaps that caused incorrect icon display at boundary values (e.g. 19.5°C)
 
 ### V1.3 (March 9, 2026)
 1. **Progressive Web App (PWA)** - Installable on Android and iOS via "Add to Home Screen", offline caching, standalone mode
