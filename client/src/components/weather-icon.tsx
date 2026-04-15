@@ -93,8 +93,10 @@ export function WeatherIcon({ condition, temp, className, size = 24, animate = t
     }
   };
 
+  const isAuto = size === "auto";
+
   return (
-    <motion.div {...animationProps} className={cn("flex items-center justify-center", className)}>
+    <motion.div {...animationProps} className={cn("flex items-center justify-center", isAuto && "w-full h-full", className)}>
       <PixelIcon type={getIconType()} size={size} />
     </motion.div>
   );
