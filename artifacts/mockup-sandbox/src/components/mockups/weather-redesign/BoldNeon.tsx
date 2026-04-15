@@ -1,0 +1,133 @@
+import React, { useState } from "react";
+import { Search, MapPin, Umbrella, Shirt, CloudRain, Sun, Cloud, Wind, Menu, ArrowRight } from "lucide-react";
+
+export function BoldNeon() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const favorites = ["SYD", "BNE", "PER", "ADL", "HOB"];
+  
+  const forecast = [
+    { day: "MON", temp: [21, 14], icon: CloudRain, color: "#FF00FF" }, // Pink
+    { day: "TUE", temp: [23, 12], icon: Cloud, color: "#00FFFF" },     // Cyan
+    { day: "WED", temp: [25, 15], icon: Sun, color: "#39FF14" },       // Lime
+    { day: "THU", temp: [28, 16], icon: Sun, color: "#FF6600" },       // Orange
+    { day: "FRI", temp: [22, 14], icon: CloudRain, color: "#FFFF00" }, // Yellow
+    { day: "SAT", temp: [19, 11], icon: Wind, color: "#FF00FF" },      // Pink
+    { day: "SUN", temp: [20, 12], icon: Cloud, color: "#00FFFF" },     // Cyan
+  ];
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-neutral-900 p-4 sm:p-8 font-sans antialiased selection:bg-[#FF00FF] selection:text-white">
+      {/* Mobile Device Container */}
+      <div className="w-full max-w-[420px] h-[850px] bg-white overflow-hidden shadow-[0_0_100px_rgba(255,0,255,0.2)] relative flex flex-col border-[12px] border-black rounded-[2.5rem]">
+        
+        {/* Header Section */}
+        <header className="px-6 pt-12 pb-4 flex justify-between items-end border-b-[6px] border-black bg-white">
+          <div>
+            <h1 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-black" style={{ textShadow: "1px 1px 0px #00FFFF" }}>
+              Better Than BoM
+            </h1>
+            <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mt-1">
+              {new Date().toLocaleDateString('en-AU', { weekday: 'short', day: '2-digit', month: 'short' })}
+            </p>
+          </div>
+          <button className="w-10 h-10 bg-black text-[#39FF14] border-2 border-[#39FF14] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-[0_0_10px_#39FF14]">
+            <Menu className="w-4 h-4" strokeWidth={3} />
+          </button>
+        </header>
+
+        {/* Search */}
+        <div className="border-b-[6px] border-black relative bg-white group focus-within:bg-[#00FFFF] transition-colors duration-300">
+          <input 
+            type="text"
+            placeholder="FIND LOCATION" 
+            className="w-full h-16 bg-transparent px-6 text-xl font-black uppercase tracking-tighter placeholder:text-black/30 focus:outline-none focus:placeholder:text-black/60 text-black"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="absolute right-6 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black text-[#FF00FF] border-2 border-[#FF00FF] shadow-[0_0_10px_#FF00FF] rounded-full group-focus-within:rotate-90 transition-transform duration-300">
+            <ArrowRight className="w-4 h-4" strokeWidth={3} />
+          </button>
+        </div>
+
+        {/* Favorites Bar */}
+        <div className="flex border-b-[6px] border-black overflow-x-auto scrollbar-hide bg-white">
+          <button className="shrink-0 px-6 py-3 bg-black text-[#FFFF00] text-[0.65rem] font-black uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 shadow-[inset_0_0_10px_#FFFF00]">
+            <MapPin className="w-3 h-3" strokeWidth={3} /> MELBOURNE
+          </button>
+          {favorites.map((fav, i) => (
+            <button key={fav} className={`shrink-0 px-6 py-3 text-[0.65rem] font-black uppercase tracking-[0.2em] hover:bg-[#FF00FF] hover:text-white transition-colors ${i !== favorites.length - 1 ? 'border-r-[6px] border-black' : ''}`}>
+              {fav}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col relative bg-white overflow-hidden justify-between">
+          
+          <div className="p-6 relative z-10">
+            {/* City Name */}
+            <h2 className="text-[4rem] leading-[0.8] font-black uppercase tracking-tighter text-black break-words" style={{ textShadow: "4px 4px 0px #00FFFF, -2px -2px 0px #FF00FF" }}>
+              MELBOURNE
+            </h2>
+
+            {/* Massive Temperature & Condition */}
+            <div className="mt-8 relative flex items-start">
+              <span className="text-[12rem] font-black leading-[0.75] tracking-tighter text-black -ml-3" style={{ textShadow: "0 0 40px rgba(57,255,20,0.5), 6px 6px 0px #39FF14" }}>
+                21
+              </span>
+              <div className="flex flex-col ml-2 mt-4">
+                <span className="text-6xl font-black text-black leading-none">°</span>
+                <div className="mt-4 bg-[#FF6600] text-black text-xl font-black uppercase tracking-tighter px-3 py-1 -rotate-3 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse">
+                  Overcast
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Outfit Recommendation */}
+          <div className="mx-6 mb-6 mt-auto border-[6px] border-black bg-white p-4 flex items-center gap-5 shadow-[8px_8px_0px_0px_#FF00FF] hover:translate-y-1 hover:translate-x-1 hover:shadow-[4px_4px_0px_0px_#FF00FF] transition-all cursor-pointer group relative overflow-hidden">
+            <div className="absolute inset-0 border-4 border-[#FF00FF] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-16 h-16 bg-[#00FFFF] flex items-center justify-center border-[4px] border-black rounded-full shrink-0 group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_#00FFFF]">
+              <Shirt className="w-8 h-8 text-black" strokeWidth={2.5} />
+            </div>
+            <div className="z-10">
+              <p className="text-[0.6rem] font-black uppercase tracking-[0.3em] text-[#FF00FF] mb-1">
+                Directive
+              </p>
+              <p className="text-2xl font-black uppercase tracking-tighter leading-none text-black">
+                T-Shirt Wx.
+              </p>
+            </div>
+          </div>
+
+        </main>
+
+        {/* 7-Day Forecast */}
+        <div className="bg-black text-white p-6 z-20 border-t-[6px] border-black">
+          <h3 className="text-[0.65rem] font-black uppercase tracking-[0.4em] text-neutral-500 mb-6 flex items-center gap-4">
+            <span className="text-[#00FFFF]" style={{ textShadow: "0 0 5px #00FFFF" }}>Forecast</span>
+            <div className="h-[2px] flex-1 bg-neutral-800"></div>
+          </h3>
+          
+          <div className="space-y-4">
+            {forecast.map((day, i) => (
+              <div key={i} className="flex items-center group cursor-pointer relative">
+                <span className="w-14 text-xl font-black uppercase tracking-tighter text-neutral-500 transition-colors" style={{ color: day.color, textShadow: `0 0 10px ${day.color}40` }}>
+                  {day.day}
+                </span>
+                <div className="flex-1 flex justify-center">
+                  <day.icon className="w-6 h-6 text-neutral-600 group-hover:text-white transition-colors" strokeWidth={2.5} />
+                </div>
+                <div className="w-28 flex items-center justify-end gap-3 font-black tracking-tighter text-xl">
+                  <span className="text-white group-hover:scale-110 transition-transform origin-right">{day.temp[0]}°</span>
+                  <span className="text-neutral-600">{day.temp[1]}°</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
